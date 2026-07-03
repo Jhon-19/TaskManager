@@ -8,3 +8,7 @@ import { Call as $Call, CancellablePromise as $CancellablePromise } from "@wails
 export function CreateDateTask(date: string): $CancellablePromise<void> {
     return $Call.ByID(3927748702, date);
 }
+
+export function GetDateList(pageNum: number, pageSize: number): $CancellablePromise<string[] | null> {
+    return $Call.ByID(781682237, pageNum, pageSize);
+}

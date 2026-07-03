@@ -7,27 +7,38 @@ import (
 	"github.com/adrg/xdg"
 )
 
-func getDataHome() string {
+func getDataHome() (string, error) {
 	appDir := filepath.Join(xdg.DataHome, "TaskExtend")
 
-	err := os.Mkdir(appDir, 0755)
-
-	if err != nil {
-		panic(err)
+	if !DirExists(appDir) {
+		err := os.Mkdir(appDir, 0755)
+		if err != nil {
+			return "", err
+		}
 	}
 
-	return appDir
+	return appDir, nil
 }
 
-func GetDataFolder(folderName string) string {
-	dataHome := getDataHome()
+func GetDataFolder(folderName string) (string, error) {
+	dataHome, err := getDataHome()
 	folderPath := filepath.Join(dataHome, folderName)
 
-	err := os.Mkdir(folderPath, 0755)
-
-	if err != nil {
-		panic(err)
+	if !DirExists(folderPath) {
+		err = os.Mkdir(folderPath, 0755)
 	}
 
-	return folderPath
+	if err != nil {
+		return "", err
+	}
+
+	return folderPath, nil
+}
+
+func DirExists(path string) bool {
+	info, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return info.IsDir()
 }

@@ -12,6 +12,7 @@
   "dependencies": {
     "@wailsio/runtime": "latest",
     "antd": "^6.5.0",
+    "dayjs": "^1.11.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "7"
