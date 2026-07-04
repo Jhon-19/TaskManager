@@ -5,16 +5,24 @@ import { TaskExtend } from "../../../../../bindings/api/services";
 import { Button, Flex } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
+import { useTaskExtendContext } from "../../contexts/TaskExtendContext";
 
 function Layout(props: any) {
   const { children } = props;
 
   const [dateList, setDateList] = useState<string[]>([]);
 
+  const { setSelectedDate } = useTaskExtendContext();
+
   const getTaskList = () => {
     TaskExtend.GetDateList(0, 7)
       .then((_dateList: string[] | null) => {
-        setDateList(_dateList || []);
+        if (Array.isArray(_dateList)) {
+          setDateList(_dateList || []);
+          if (_dateList.length > 0) {
+            setSelectedDate(_dateList?.[0] || "");
+          }
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -28,7 +36,7 @@ function Layout(props: any) {
   return (
     <div className={styles.layout}>
       <div className={styles.leftPanel}>
-        <Flex justify="space-between">
+        <Flex justify="space-between" align="center">
           <div>任务列表</div>
           <div>
             <Button

@@ -1,10 +1,21 @@
 import Layout from "./components/Layout";
+import { TaskExtendProvider } from "./contexts/TaskExtendContext";
 
 function TaskExtend(props: any) {
   const {} = props;
-  return <Layout>
-    <div>12333</div>
-  </Layout>
+  return (
+    <Layout>
+      <div>12333</div>
+    </Layout>
+  );
 }
 
-export default TaskExtend;
+const TaskExtendWrapper = (props) => {
+  return (
+    <TaskExtendProvider>
+      <TaskExtend {...props} />
+    </TaskExtendProvider>
+  );
+};
+
+export default TaskExtendWrapper;
