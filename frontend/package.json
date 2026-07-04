@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/icons": "6.x",
     "@wailsio/runtime": "latest",
     "antd": "^6.5.0",
     "dayjs": "^1.11.21",

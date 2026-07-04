@@ -9,6 +9,8 @@ import (
 
 type TaskExtend struct{}
 
+// CreateDateTask 根据日期创建任务目录
+// date: yyyymmdd 形式的日期字符串，如 "20260704"
 func (t *TaskExtend) CreateDateTask(date string) error {
 	taskExtendFolder, err := utils.GetDataFolder("date-tasks")
 	dateFolder := filepath.Join(taskExtendFolder, date)

@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import styles from './index.module.less';
+import styles from "./index.module.less";
 
 const groupDateByMonth = (dateList: string[]) => {
   if (!Array.isArray(dateList)) return {};
@@ -7,6 +7,7 @@ const groupDateByMonth = (dateList: string[]) => {
   const dateGroup = dateList.reduce((acc: any, date: string) => {
     const dateObj = dayjs(date, "YYYYMMDD");
     const yearMonth = dateObj.format("YYYYMM");
+    const day = dateObj.format("DD");
 
     if (!acc[yearMonth]) {
       acc[yearMonth] = [];
@@ -14,8 +15,9 @@ const groupDateByMonth = (dateList: string[]) => {
 
     acc[yearMonth].push({
       date,
-      day: dateObj.date(),
+      day,
     });
+    return acc;
   }, {});
 
   return dateGroup;
@@ -28,20 +30,23 @@ function NavList(props: any) {
 
   return (
     <div>
-      {Object.keys(dateGroup).map((yearMonth: string) => {
-        const dayList = dateGroup[yearMonth];
+      {dateGroup &&
+        Object.keys(dateGroup).map((yearMonth: string) => {
+          const dayList = dateGroup[yearMonth];
 
-        if (!Array.isArray(dayList)) return null;
+          if (!Array.isArray(dayList)) return null;
 
-        return (
-          <div>
-            <div className={styles.groupTitle}>{yearMonth}</div>
-            {dayList.map((day: string) => (
-              <div  className={styles.groupItem}>{day}</div>
-            ))}
-          </div>
-        );
-      })}
+          return (
+            <div key={yearMonth}>
+              <div className={styles.groupTitle}>{yearMonth}</div>
+              {dayList.map((dayInfo: any) => (
+                <div key={dayInfo?.date} className={styles.groupItem}>
+                  {dayInfo?.day || '-'}
+                </div>
+              ))}
+            </div>
+          );
+        })}
     </div>
   );
 }
