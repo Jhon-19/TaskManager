@@ -9,6 +9,10 @@ import { Call as $Call, CancellablePromise as $CancellablePromise } from "@wails
 // @ts-ignore: Unused imports
 import * as constants$0 from "../constants/models.js";
 
+export function AddTask(date: string, taskGroupId: string): $CancellablePromise<void> {
+    return $Call.ByID(4056287595, date, taskGroupId);
+}
+
 /**
  * CreateDateTask 根据日期创建任务目录
  * date: yyyymmdd 形式的日期字符串，如 "20260704"
