@@ -20,8 +20,7 @@ func (t *TaskExtend) CreateDateTask(date string) error {
 	dateFolder := filepath.Join(taskExtendFolder, date)
 
 	if err = os.Mkdir(dateFolder, 0755); err != nil {
-		fmt.Printf("创建日期目录失败: %v", err)
-		return err
+		return fmt.Errorf("创建日期目录失败: %w", err)
 	}
 
 	dataFilePath := filepath.Join(dateFolder, "tasks.json")
@@ -35,8 +34,7 @@ func (t *TaskExtend) CreateDateTask(date string) error {
 	}
 
 	if err = os.WriteFile(dataFilePath, utils.MarshalJSON(initialData), 0644); err != nil {
-		fmt.Printf("初始化任务文件失败: %v", err)
-		return err
+		return fmt.Errorf("初始化任务文件失败: %w", err)
 	}
 
 	return nil
@@ -69,4 +67,28 @@ func (t *TaskExtend) GetDateList(pageNum int, pageSize int) ([]string, error) {
 	})
 
 	return dateList, nil
+}
+
+func (t *TaskExtend) GetTaskData(date string) ([]constants.TaskGroup, error) {
+	taskExtendFolder, err := utils.GetDataFolder("date-tasks")
+	dataFilePath := filepath.Join(taskExtendFolder, date, "tasks.json")
+
+	if !utils.FileExists(dataFilePath) {
+		return []constants.TaskGroup{}, fmt.Errorf("任务数据文件不存在: %s", dataFilePath)
+	}
+
+	data, err := os.ReadFile(dataFilePath)
+
+	if err != nil {
+		return []constants.TaskGroup{}, err
+	}
+
+	var taskGroups []constants.TaskGroup
+	err = utils.UnmarshalJSON(data, &taskGroups)
+
+	if err != nil {
+		return []constants.TaskGroup{}, err
+	}
+
+	return taskGroups, nil
 }

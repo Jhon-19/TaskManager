@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import NavList from "../NavList";
 import styles from "./index.module.less";
 import { TaskExtend } from "../../../../../bindings/api/services";
-import { Button, Flex } from "antd";
+import { Button, Flex, message } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useTaskExtendContext } from "../../contexts/TaskExtendContext";
@@ -41,10 +41,14 @@ function Layout(props: any) {
           <div>
             <Button
               icon={<PlusCircleOutlined />}
-              onClick={() => {
+              onClick={async () => {
                 const currentDate = dayjs().format("YYYYMMDD");
-                TaskExtend.CreateDateTask(currentDate);
-                getTaskList();
+                try {
+                  await TaskExtend.CreateDateTask(currentDate);
+                  getTaskList();
+                } catch (err: any) {
+                  message.error(err?.message || "创建任务失败");
+                }
               }}
             />
           </div>

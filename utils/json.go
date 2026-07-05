@@ -10,3 +10,12 @@ func MarshalJSON(v interface{}) []byte {
 	}
 	return data
 }
+
+func UnmarshalJSON(data []byte, v interface{}) error {
+	err := json.Unmarshal(data, v)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}

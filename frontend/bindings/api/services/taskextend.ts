@@ -5,6 +5,10 @@
 // @ts-ignore: Unused imports
 import { Call as $Call, CancellablePromise as $CancellablePromise } from "@wailsio/runtime";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as constants$0 from "../constants/models.js";
+
 /**
  * CreateDateTask 根据日期创建任务目录
  * date: yyyymmdd 形式的日期字符串，如 "20260704"
@@ -15,4 +19,8 @@ export function CreateDateTask(date: string): $CancellablePromise<void> {
 
 export function GetDateList(pageNum: number, pageSize: number): $CancellablePromise<string[] | null> {
     return $Call.ByID(781682237, pageNum, pageSize);
+}
+
+export function GetTaskData(date: string): $CancellablePromise<constants$0.TaskGroup[] | null> {
+    return $Call.ByID(2356829788, date);
 }
