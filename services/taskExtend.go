@@ -190,3 +190,55 @@ func (t *TaskExtend) DeleteTask(date string, taskGroupId string, taskId string) 
 
 	return saveTaskData(taskGroups, date)
 }
+
+func (t *TaskExtend) AddTaskGroup(date string, groupName string) error {
+	taskGroups, err := t.GetTaskData(date)
+
+	if err != nil {
+		return fmt.Errorf("获取任务数据失败: %w", err)
+	}
+
+	newGroup := constants.TaskGroup{
+		ID:    uuid.NewString(),
+		Name:  groupName,
+		Tasks: []constants.Task{},
+	}
+
+	taskGroups = append(taskGroups, newGroup)
+
+	return saveTaskData(taskGroups, date)
+}
+
+func (t *TaskExtend) UpdateTaskGroup(date string, taskGroupId string, newName string) error {
+	taskGroups, err := t.GetTaskData(date)
+
+	if err != nil {
+		return fmt.Errorf("获取任务数据失败: %w", err)
+	}
+
+	for index, taskGroup := range taskGroups {
+		if taskGroup.ID == taskGroupId {
+			taskGroups[index].Name = newName
+			break
+		}
+	}
+
+	return saveTaskData(taskGroups, date)
+}
+
+func (t *TaskExtend) DeleteTaskGroup(date string, taskGroupId string) error {
+	taskGroups, err := t.GetTaskData(date)
+
+	if err != nil {
+		return fmt.Errorf("获取任务数据失败: %w", err)
+	}
+
+	for index, taskGroup := range taskGroups {
+		if taskGroup.ID == taskGroupId {
+			taskGroups = append(taskGroups[:index], taskGroups[index+1:]...)
+			break
+		}
+	}
+
+	return saveTaskData(taskGroups, date)
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTaskExtendContext } from "../../contexts/TaskExtendContext";
 import { TaskExtend } from "../../../../../bindings/api/services";
-import { Button, Flex } from "antd";
+import { Button, Flex, message } from "antd";
 import styles from "./index.module.less";
 import TaskGroup from "../TaskGroup";
 import { PlusOutlined } from "@ant-design/icons";
@@ -21,11 +21,19 @@ function TaskPanel(props: any) {
 
   useEffect(() => {
     if (selectedDate) {
-      getTaskGroups()
+      getTaskGroups();
     }
   }, [selectedDate]);
 
-  const handleAddGroup = () => {};
+  const handleAddGroup = () => {
+    TaskExtend.AddTaskGroup(selectedDate, "新的分组")
+      .then((res: any) => {
+        getTaskGroups();
+      })
+      .catch((err: any) => {
+        message.error(err?.message || "新增分组失败");
+      });
+  };
 
   return (
     <div>
@@ -39,10 +47,16 @@ function TaskPanel(props: any) {
           新增分组
         </Button>
       </Flex>
-      {Array.isArray(taskGroups) &&
-        taskGroups.map((taskGroup: any) => (
-          <TaskGroup key={taskGroup.id} taskGroup={taskGroup} onRefresh={getTaskGroups} />
-        ))}
+      <Flex vertical={true} gap={12} className={styles.taskGroups}>
+        {Array.isArray(taskGroups) &&
+          taskGroups.map((taskGroup: any) => (
+            <TaskGroup
+              key={taskGroup.id}
+              taskGroup={taskGroup}
+              onRefresh={getTaskGroups}
+            />
+          ))}
+      </Flex>
     </div>
   );
 }

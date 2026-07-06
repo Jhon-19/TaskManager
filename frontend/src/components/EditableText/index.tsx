@@ -5,7 +5,7 @@ import { CheckOutlined, CloseOutlined, EditOutlined } from "@ant-design/icons";
 import classNames from "classnames";
 
 function EditableText(props: any) {
-  const { className, value, onChange } = props;
+  const { className, value, onChange, editable = true } = props;
 
   const [isEditing, setIsEditing] = useState(false);
   const [innerValue, setInnerValue] = useState("");
@@ -24,6 +24,7 @@ function EditableText(props: any) {
               setIsEditing(false);
               onChange?.(innerValue);
             }}
+            type="text"
             icon={<CheckOutlined />}
           />
           <Button
@@ -31,19 +32,23 @@ function EditableText(props: any) {
               setIsEditing(false);
               setInnerValue(value);
             }}
+            type="text"
             icon={<CloseOutlined />}
           />
         </Flex>
       ) : (
         <Flex>
           <div className="editable-text-value">{value}</div>
-          <Button
-            onClick={() => {
-              setIsEditing(true);
-              setInnerValue(value);
-            }}
-            icon={<EditOutlined />}
-          />
+          {editable && (
+            <Button
+              onClick={() => {
+                setIsEditing(true);
+                setInnerValue(value);
+              }}
+              type="text"
+              icon={<EditOutlined />}
+            />
+          )}
         </Flex>
       )}
     </div>

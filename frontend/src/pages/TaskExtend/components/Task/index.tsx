@@ -42,7 +42,12 @@ function Task(props: any) {
           updateTask("title", newValue);
         }}
       />
-      <Button danger icon={<DeleteOutlined />} onClick={deleteTask} />
+      <Button
+        danger
+        type="text"
+        icon={<DeleteOutlined />}
+        onClick={deleteTask}
+      />
     </Flex>
   );
 }

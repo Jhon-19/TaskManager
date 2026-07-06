@@ -13,6 +13,10 @@ export function AddTask(date: string, taskGroupId: string): $CancellablePromise<
     return $Call.ByID(4056287595, date, taskGroupId);
 }
 
+export function AddTaskGroup(date: string, groupName: string): $CancellablePromise<void> {
+    return $Call.ByID(349401474, date, groupName);
+}
+
 /**
  * CreateDateTask 根据日期创建任务目录
  * date: yyyymmdd 形式的日期字符串，如 "20260704"
@@ -25,6 +29,10 @@ export function DeleteTask(date: string, taskGroupId: string, taskId: string): $
     return $Call.ByID(2101761925, date, taskGroupId, taskId);
 }
 
+export function DeleteTaskGroup(date: string, taskGroupId: string): $CancellablePromise<void> {
+    return $Call.ByID(2700056044, date, taskGroupId);
+}
+
 export function GetDateList(pageNum: number, pageSize: number): $CancellablePromise<string[] | null> {
     return $Call.ByID(781682237, pageNum, pageSize);
 }
@@ -35,4 +43,8 @@ export function GetTaskData(date: string): $CancellablePromise<constants$0.TaskG
 
 export function UpdateTask(date: string, taskGroupId: string, taskId: string, updatedTask: constants$0.UpdateTask): $CancellablePromise<void> {
     return $Call.ByID(1562967583, date, taskGroupId, taskId, updatedTask);
+}
+
+export function UpdateTaskGroup(date: string, taskGroupId: string, newName: string): $CancellablePromise<void> {
+    return $Call.ByID(1255901926, date, taskGroupId, newName);
 }
