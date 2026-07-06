@@ -1,34 +1,49 @@
-import { message } from "antd";
+import { Button, Flex, message } from "antd";
 import styles from "./index.module.less";
 import { useTaskExtendContext } from "../../contexts/TaskExtendContext";
 import EditableText from "@/components/EditableText";
 import { TaskExtend } from "../../../../../bindings/api/services";
+import { DeleteOutlined } from "@ant-design/icons";
 
 function Task(props: any) {
   const { task, taskGroupId, onRefresh } = props;
 
-  const {selectedDate} = useTaskExtendContext();
+  const { selectedDate } = useTaskExtendContext();
 
   const { title, id } = task || {};
 
-  const updateTask = async (key, value) => { 
+  const updateTask = async (key, value) => {
     try {
-      await TaskExtend.UpdateTask(selectedDate, taskGroupId, id, { [key]: value } as any)
-      onRefresh?.()
+      await TaskExtend.UpdateTask(selectedDate, taskGroupId, id, {
+        [key]: value,
+      } as any);
+      onRefresh?.();
     } catch (err: any) {
-      message.error(err?.message)
+      message.error(err?.message);
     }
-   }
+  };
+
+  const deleteTask = () => {
+    TaskExtend.DeleteTask(selectedDate, taskGroupId, id)
+      .then(() => {
+        onRefresh?.();
+      })
+      .catch((err) => {
+        message.error(err?.message);
+      });
+  };
 
   return (
-    <div className={styles.task}>
+    <Flex gap={8} className={styles.task}>
       <EditableText
+        className={styles.editableText}
         value={title}
         onChange={(newValue) => {
-          updateTask("title", newValue)
+          updateTask("title", newValue);
         }}
       />
-    </div>
+      <Button danger icon={<DeleteOutlined />} onClick={deleteTask} />
+    </Flex>
   );
 }
 

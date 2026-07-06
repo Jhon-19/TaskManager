@@ -2,15 +2,16 @@ import { useState } from "react";
 import "./index.less";
 import { Button, Flex, Input } from "antd";
 import { CheckOutlined, CloseOutlined, EditOutlined } from "@ant-design/icons";
+import classNames from "classnames";
 
 function EditableText(props: any) {
-  const { value, onChange } = props;
+  const { className, value, onChange } = props;
 
   const [isEditing, setIsEditing] = useState(false);
   const [innerValue, setInnerValue] = useState("");
 
   return (
-    <div className="editable-text">
+    <div className={classNames("editable-text", className)}>
       {isEditing ? (
         <Flex gap={4}>
           <Input

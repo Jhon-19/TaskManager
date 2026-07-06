@@ -168,3 +168,25 @@ func (t *TaskExtend) UpdateTask(date string, taskGroupId string, taskId string, 
 
 	return saveTaskData(taskGroups, date)
 }
+
+func (t *TaskExtend) DeleteTask(date string, taskGroupId string, taskId string) error {
+	taskGroups, err := t.GetTaskData(date)
+
+	if err != nil {
+		return fmt.Errorf("获取任务数据失败: %w", err)
+	}
+
+	for groupIndex, taskGroup := range taskGroups {
+		if taskGroup.ID == taskGroupId {
+			for taskIndex, task := range taskGroup.Tasks {
+				if task.ID == taskId {
+					taskGroups[groupIndex].Tasks = append(taskGroups[groupIndex].Tasks[:taskIndex], taskGroups[groupIndex].Tasks[taskIndex+1:]...)
+					break
+				}
+			}
+			break
+		}
+	}
+
+	return saveTaskData(taskGroups, date)
+}

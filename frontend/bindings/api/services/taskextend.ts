@@ -21,6 +21,10 @@ export function CreateDateTask(date: string): $CancellablePromise<void> {
     return $Call.ByID(3927748702, date);
 }
 
+export function DeleteTask(date: string, taskGroupId: string, taskId: string): $CancellablePromise<void> {
+    return $Call.ByID(2101761925, date, taskGroupId, taskId);
+}
+
 export function GetDateList(pageNum: number, pageSize: number): $CancellablePromise<string[] | null> {
     return $Call.ByID(781682237, pageNum, pageSize);
 }
