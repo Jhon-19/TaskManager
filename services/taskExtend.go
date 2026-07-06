@@ -134,3 +134,37 @@ func (t *TaskExtend) AddTask(date string, taskGroupId string) error {
 
 	return saveTaskData(taskGroups, date)
 }
+
+func updateTaskElement(srcTask *constants.Task, updatedTask constants.UpdateTask) {
+	if updatedTask.Title != nil {
+		srcTask.Title = *updatedTask.Title
+	}
+	if updatedTask.Detail != nil {
+		srcTask.Detail = *updatedTask.Detail
+	}
+	if updatedTask.IsCompleted != nil {
+		srcTask.IsCompleted = *updatedTask.IsCompleted
+	}
+}
+
+func (t *TaskExtend) UpdateTask(date string, taskGroupId string, taskId string, updatedTask constants.UpdateTask) error {
+	taskGroups, err := t.GetTaskData(date)
+
+	if err != nil {
+		return fmt.Errorf("获取任务数据失败: %w", err)
+	}
+
+	for groupIndex, taskGroup := range taskGroups {
+		if taskGroup.ID == taskGroupId {
+			for taskIndex, task := range taskGroup.Tasks {
+				if task.ID == taskId {
+					updateTaskElement(&taskGroups[groupIndex].Tasks[taskIndex], updatedTask)
+					break
+				}
+			}
+			break
+		}
+	}
+
+	return saveTaskData(taskGroups, date)
+}

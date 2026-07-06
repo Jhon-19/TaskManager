@@ -13,3 +13,10 @@ export interface TaskGroup {
     "name": string;
     "tasks": Task[] | null;
 }
+
+export interface UpdateTask {
+    "id": string | null;
+    "title": string | null;
+    "detail": string | null;
+    "isCompleted": boolean | null;
+}

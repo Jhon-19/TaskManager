@@ -27,7 +27,7 @@ function TaskGroup(props: any) {
       <div className={styles.taskGroupName}>{name}</div>
       <Flex vertical={true} gap={8}>
         {Array.isArray(tasks) &&
-          tasks.map((task: any) => <Task key={task.id} task={task} />)}
+          tasks.map((task: any) => <Task key={task.id} task={task} taskGroupId={id} onRefresh={onRefresh} />)}
       </Flex>
       <Button
         className={styles.addTaskButton}

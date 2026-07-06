@@ -28,3 +28,7 @@ export function GetDateList(pageNum: number, pageSize: number): $CancellableProm
 export function GetTaskData(date: string): $CancellablePromise<constants$0.TaskGroup[] | null> {
     return $Call.ByID(2356829788, date);
 }
+
+export function UpdateTask(date: string, taskGroupId: string, taskId: string, updatedTask: constants$0.UpdateTask): $CancellablePromise<void> {
+    return $Call.ByID(1562967583, date, taskGroupId, taskId, updatedTask);
+}

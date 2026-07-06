@@ -12,3 +12,10 @@ type Task struct {
 	Detail      string `json:"detail"`
 	IsCompleted bool   `json:"isCompleted"`
 }
+
+type UpdateTask struct {
+	ID          *string `json:"id"`
+	Title       *string `json:"title"`
+	Detail      *string `json:"detail"`
+	IsCompleted *bool   `json:"isCompleted"`
+}
