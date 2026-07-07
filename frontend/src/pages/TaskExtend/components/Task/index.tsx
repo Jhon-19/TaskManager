@@ -1,4 +1,4 @@
-import { Button, Flex, message } from "antd";
+import { Button, Checkbox, Flex, message } from "antd";
 import styles from "./index.module.less";
 import { useTaskExtendContext } from "../../contexts/TaskExtendContext";
 import EditableText from "@/components/EditableText";
@@ -33,8 +33,14 @@ function Task(props: any) {
       });
   };
 
+  const handleTaskCheckedChange = (e) => {
+    const checked = e.target.checked;
+    updateTask("isCompleted", checked);
+  };
+
   return (
     <Flex gap={8} className={styles.task}>
+      <Checkbox checked={task?.isCompleted} onChange={handleTaskCheckedChange} />
       <EditableText
         className={styles.editableText}
         value={title}
