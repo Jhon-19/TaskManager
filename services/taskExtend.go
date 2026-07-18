@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"sort"
 
 	"github.com/google/uuid"
@@ -162,6 +163,15 @@ func (t *TaskExtend) UpdateTask(date string, taskGroupId string, taskId string, 
 					break
 				}
 			}
+			slices.SortStableFunc(taskGroups[groupIndex].Tasks, func(a, b constants.Task) int {
+				if a.IsCompleted == b.IsCompleted {
+					return 0
+				}
+				if a.IsCompleted {
+					return 1
+				}
+				return -1
+			})
 			break
 		}
 	}
