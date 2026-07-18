@@ -1,16 +1,20 @@
-import { Button, Checkbox, Flex, message } from "antd";
+import { Button, Checkbox, Drawer, Flex, message } from "antd";
 import styles from "./index.module.less";
 import { useTaskExtendContext } from "../../contexts/TaskExtendContext";
 import EditableText from "@/components/EditableText";
 import { TaskExtend } from "../../../../../bindings/api/services";
 import { DeleteOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import MarkdownEditor from "@/components/MarkdownEditor";
 
 function Task(props: any) {
   const { task, taskGroupId, onRefresh } = props;
 
   const { selectedDate } = useTaskExtendContext();
 
-  const { title, id } = task || {};
+  const [detailDrawerVisible, setDetailDrawerVisible] = useState(false);
+
+  const { title, id, detail } = task || {};
 
   const updateTask = async (key, value) => {
     try {
@@ -38,23 +42,55 @@ function Task(props: any) {
     updateTask("isCompleted", checked);
   };
 
+  const handleDetailConfirm = () => {
+    
+    setDetailDrawerVisible(false);
+  };
+
   return (
-    <Flex gap={8} className={styles.task}>
-      <Checkbox checked={task?.isCompleted} onChange={handleTaskCheckedChange} />
-      <EditableText
-        className={styles.editableText}
-        value={title}
-        onChange={(newValue) => {
-          updateTask("title", newValue);
-        }}
-      />
-      <Button
-        danger
-        type="text"
-        icon={<DeleteOutlined />}
-        onClick={deleteTask}
-      />
-    </Flex>
+    <>
+      <Flex gap={8} className={styles.task}>
+        <Checkbox
+          checked={task?.isCompleted}
+          onChange={handleTaskCheckedChange}
+        />
+        <div
+          className={styles.editableTextWrapper}
+          onClick={() => {
+            setDetailDrawerVisible(true);
+          }}
+        >
+          <EditableText
+            value={title}
+            onChange={(newValue) => {
+              updateTask("title", newValue);
+            }}
+          />
+        </div>
+        <Button
+          danger
+          type="text"
+          icon={<DeleteOutlined />}
+          onClick={deleteTask}
+        />
+      </Flex>
+      <Drawer
+        title="任务详情"
+        size={520}
+        open={detailDrawerVisible}
+        onClose={() => setDetailDrawerVisible(false)}
+        footer={
+          <Flex gap={12}>
+            <Button onClick={() => setDetailDrawerVisible(false)}>取消</Button>
+            <Button onClick={handleDetailConfirm} type="primary">
+              确认
+            </Button>
+          </Flex>
+        }
+      >
+        <MarkdownEditor value={detail} />
+      </Drawer>
+    </>
   );
 }
 

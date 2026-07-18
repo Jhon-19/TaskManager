@@ -104,6 +104,12 @@ func getDataFilePath(date string) (string, error) {
 	return dataFilePath, err
 }
 
+func getDateImagePath() (string, error) {
+	taskExtendFolder, err := utils.GetDataHome()
+	imageFolder := filepath.Join(taskExtendFolder, "images")
+	return imageFolder, err
+}
+
 func saveTaskData(taskGroups []constants.TaskGroup, date string) error {
 	dataFilePath, err := getDataFilePath(date)
 
@@ -251,4 +257,30 @@ func (t *TaskExtend) DeleteTaskGroup(date string, taskGroupId string) error {
 	}
 
 	return saveTaskData(taskGroups, date)
+}
+
+func (t *TaskExtend) UploadImage(name string, data []uint) (string, error) {
+	imageFolder, err := getDateImagePath()
+
+	if !utils.DirExists(imageFolder) {
+		if err = os.Mkdir(imageFolder, 0755); err != nil {
+			return "error image path", fmt.Errorf("创建图片目录失败: %w", err)
+		}
+	}
+
+	filename := uuid.New().String() + filepath.Ext(name)
+	imagePath := filepath.Join(imageFolder, filename)
+
+	bytes := make([]byte, len(data))
+	for i, v := range data {
+		bytes[i] = byte(v)
+	}
+
+	err = os.WriteFile(imagePath, bytes, 0644)
+
+	if err != nil {
+		return "error in save image", err
+	}
+
+	return "file://" + imagePath, nil
 }

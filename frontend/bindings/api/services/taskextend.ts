@@ -48,3 +48,7 @@ export function UpdateTask(date: string, taskGroupId: string, taskId: string, up
 export function UpdateTaskGroup(date: string, taskGroupId: string, newName: string): $CancellablePromise<void> {
     return $Call.ByID(1255901926, date, taskGroupId, newName);
 }
+
+export function UploadImage(name: string, data: number[] | null): $CancellablePromise<string> {
+    return $Call.ByID(2440329771, name, data);
+}

@@ -7,7 +7,7 @@ import (
 	"github.com/adrg/xdg"
 )
 
-func getDataHome() (string, error) {
+func GetDataHome() (string, error) {
 	appDir := filepath.Join(xdg.DataHome, "TaskExtend")
 
 	if !DirExists(appDir) {
@@ -21,7 +21,7 @@ func getDataHome() (string, error) {
 }
 
 func GetDataFolder(folderName string) (string, error) {
-	dataHome, err := getDataHome()
+	dataHome, err := GetDataHome()
 	folderPath := filepath.Join(dataHome, folderName)
 
 	if !DirExists(folderPath) {
