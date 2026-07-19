@@ -23,6 +23,10 @@ function MarkdownEditor(props: any) {
           try {
             const file = files[0];
 
+            if (!file.type.startsWith('image/')) {
+              return '只支持图片类型'
+            }
+
             const buffer = await file.arrayBuffer();
 
             const bytes = new Uint8Array(buffer);
