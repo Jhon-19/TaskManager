@@ -104,12 +104,6 @@ func getDataFilePath(date string) (string, error) {
 	return dataFilePath, err
 }
 
-func getDateImagePath() (string, error) {
-	taskExtendFolder, err := utils.GetDataHome()
-	imageFolder := filepath.Join(taskExtendFolder, "images")
-	return imageFolder, err
-}
-
 func saveTaskData(taskGroups []constants.TaskGroup, date string) error {
 	dataFilePath, err := getDataFilePath(date)
 
@@ -260,12 +254,10 @@ func (t *TaskExtend) DeleteTaskGroup(date string, taskGroupId string) error {
 }
 
 func (t *TaskExtend) UploadImage(name string, data []uint) (string, error) {
-	imageFolder, err := getDateImagePath()
+	imageFolder := imageFolder()
 
-	if !utils.DirExists(imageFolder) {
-		if err = os.Mkdir(imageFolder, 0755); err != nil {
-			return "error image path", fmt.Errorf("创建图片目录失败: %w", err)
-		}
+	if imageFolder == "" {
+		return "error image path", fmt.Errorf("创建图片目录失败")
 	}
 
 	filename := uuid.New().String() + filepath.Ext(name)
@@ -276,11 +268,12 @@ func (t *TaskExtend) UploadImage(name string, data []uint) (string, error) {
 		bytes[i] = byte(v)
 	}
 
-	err = os.WriteFile(imagePath, bytes, 0644)
+	err := os.WriteFile(imagePath, bytes, 0644)
 
 	if err != nil {
 		return "error in save image", err
 	}
 
-	return "file://" + imagePath, nil
+	// 返回相对 URL，webview 以当前页面 origin 解析后由 Wails AssetServer 中间件服务
+	return imageURL(filename), nil
 }

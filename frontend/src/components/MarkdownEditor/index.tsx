@@ -28,18 +28,9 @@ function MarkdownEditor(props: any) {
 
             const url = await UploadImage(file.name, Array.from(bytes) as any)
 
-            return JSON.stringify({
-              msg: "",
-              code: 0,
-              data: {
-                errFiles: [],
-                succMap: {
-                  [file.name]: url
-                }
-              }
-            })
+            vditor.insertValue(`![${file.name || 'image'}](${url})\n`)
           } catch (err) {
-            return "图片上传失败"
+            return "图片上传失败" as any
           }
         }
       }
