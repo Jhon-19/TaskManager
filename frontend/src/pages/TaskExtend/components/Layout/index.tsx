@@ -14,7 +14,7 @@ function Layout(props: any) {
   const { setSelectedDate } = useTaskExtendContext();
 
   const getTaskList = () => {
-    TaskExtend.GetDateList(0, 7)
+    TaskExtend.GetDateList(0, 20)
       .then((_dateList: string[] | null) => {
         if (Array.isArray(_dateList)) {
           setDateList(_dateList || []);

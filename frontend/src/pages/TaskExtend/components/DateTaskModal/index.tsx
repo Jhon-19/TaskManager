@@ -14,9 +14,10 @@ function DateTaskModal(props: any) {
   const [extendDate, setExtendDate] = useState<any>(dayjs().subtract(1, "day"));
 
   const createDateTask = async () => {
-    const currentDate = dayjs().format("YYYYMMDD");
     try {
-      await TaskExtend.CreateDateTask(currentDate);
+      const currentDate = createDate.format("YYYYMMDD");
+      const targetDate = extendDate.format("YYYYMMDD")
+      await TaskExtend.CreateDateTask(currentDate, targetDate);
       onSuccess?.();
     } catch (err: any) {
       message.error(err?.message || "创建任务失败");
@@ -49,6 +50,7 @@ function DateTaskModal(props: any) {
             </Button>
             <Button
               onClick={() => {
+                createDateTask()
                 setDateTaskModalVisible(false);
               }}
               type="primary"

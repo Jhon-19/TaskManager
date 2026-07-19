@@ -16,7 +16,7 @@ type TaskExtend struct{}
 
 // CreateDateTask 根据日期创建任务目录
 // date: yyyymmdd 形式的日期字符串，如 "20260704"
-func (t *TaskExtend) CreateDateTask(date string) error {
+func (t *TaskExtend) CreateDateTask(date string, extendDate string) error {
 	dateFolder, err := getDateFolderPath(date)
 
 	if err = os.Mkdir(dateFolder, 0755); err != nil {
@@ -25,12 +25,22 @@ func (t *TaskExtend) CreateDateTask(date string) error {
 
 	dataFilePath := filepath.Join(dateFolder, "tasks.json")
 
-	initialData := []constants.TaskGroup{
-		{
-			ID:    uuid.NewString(),
-			Name:  "默认任务组",
-			Tasks: []constants.Task{},
-		},
+	extendTaskData, err := t.GetTaskData(extendDate)
+
+	var initialData []constants.TaskGroup
+
+	if err == nil {
+		initialData = filterCompletedTask(extendTaskData)
+	}
+
+	if len(initialData) == 0 {
+		initialData = []constants.TaskGroup{
+			{
+				ID:    uuid.NewString(),
+				Name:  "默认任务组",
+				Tasks: []constants.Task{},
+			},
+		}
 	}
 
 	if err = os.WriteFile(dataFilePath, utils.MarshalJSON(initialData), 0644); err != nil {
@@ -38,6 +48,29 @@ func (t *TaskExtend) CreateDateTask(date string) error {
 	}
 
 	return nil
+}
+
+func filterCompletedTask(taskGroups []constants.TaskGroup) []constants.TaskGroup {
+	var filteredTaskGroups []constants.TaskGroup
+
+	for _, taskGroup := range taskGroups {
+		var filteredTasks []constants.Task
+
+		tasks := taskGroup.Tasks
+		for _, task := range tasks {
+			if !task.IsCompleted {
+				filteredTasks = append(filteredTasks, task)
+			}
+		}
+
+		if len(filteredTasks) > 0 {
+			filteredTaskGroup := taskGroup
+			filteredTaskGroup.Tasks = filteredTasks
+			filteredTaskGroups = append(filteredTaskGroups, filteredTaskGroup)
+		}
+	}
+
+	return filteredTaskGroups
 }
 
 func (t *TaskExtend) GetDateList(pageNum int, pageSize int) ([]string, error) {
