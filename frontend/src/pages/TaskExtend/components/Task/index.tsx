@@ -12,9 +12,10 @@ function Task(props: any) {
 
   const { selectedDate } = useTaskExtendContext();
 
-  const [detailDrawerVisible, setDetailDrawerVisible] = useState(false);
-
   const { title, id, detail } = task || {};
+
+  const [detailDrawerVisible, setDetailDrawerVisible] = useState(false);
+  const [detailValue, setDetailValue] = useState(detail)
 
   const updateTask = async (key, value) => {
     try {
@@ -43,9 +44,13 @@ function Task(props: any) {
   };
 
   const handleDetailConfirm = () => {
-    
+    updateTask('detail', detailValue)
     setDetailDrawerVisible(false);
   };
+
+  const handleDetailClose = () => {
+    setDetailDrawerVisible(false)
+  }
 
   return (
     <>
@@ -78,17 +83,18 @@ function Task(props: any) {
         title="任务详情"
         size={520}
         open={detailDrawerVisible}
-        onClose={() => setDetailDrawerVisible(false)}
+        onClose={handleDetailClose}
         footer={
           <Flex gap={12}>
-            <Button onClick={() => setDetailDrawerVisible(false)}>取消</Button>
+            <Button onClick={handleDetailClose}>取消</Button>
             <Button onClick={handleDetailConfirm} type="primary">
               确认
             </Button>
           </Flex>
         }
+        destroyOnHidden
       >
-        <MarkdownEditor value={detail} />
+        <MarkdownEditor value={detailValue} onChange={setDetailValue} />
       </Drawer>
     </>
   );

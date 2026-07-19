@@ -5,7 +5,7 @@ import "./index.less";
 import { UploadImage } from "../../../bindings/api/services/taskextend";
 
 function MarkdownEditor(props: any) {
-  const { value, className } = props;
+  const { value, onChange, className } = props;
 
   const [vd, setVd] = useState<Vditor>();
 
@@ -80,6 +80,9 @@ function MarkdownEditor(props: any) {
           ],
         },
       ],
+      input: (value) => {
+        onChange?.(value)
+      }
     });
 
     return () => {
