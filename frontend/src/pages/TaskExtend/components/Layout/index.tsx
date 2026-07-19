@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import NavList from "../NavList";
 import styles from "./index.module.less";
 import { TaskExtend } from "../../../../../bindings/api/services";
-import { Button, Flex, message } from "antd";
-import { PlusCircleOutlined } from "@ant-design/icons";
-import dayjs from "dayjs";
+import { Flex } from "antd";
 import { useTaskExtendContext } from "../../contexts/TaskExtendContext";
+import DateTaskModal from "../DateTaskModal";
 
 function Layout(props: any) {
   const { children } = props;
@@ -38,20 +37,7 @@ function Layout(props: any) {
       <div className={styles.leftPanel}>
         <Flex justify="space-between" align="center">
           <div>任务列表</div>
-          <div>
-            <Button
-              icon={<PlusCircleOutlined />}
-              onClick={async () => {
-                const currentDate = dayjs().format("YYYYMMDD");
-                try {
-                  await TaskExtend.CreateDateTask(currentDate);
-                  getTaskList();
-                } catch (err: any) {
-                  message.error(err?.message || "创建任务失败");
-                }
-              }}
-            />
-          </div>
+          <DateTaskModal onSuccess={getTaskList} />
         </Flex>
         <NavList dateList={dateList} />
       </div>
