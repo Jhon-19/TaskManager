@@ -42,7 +42,7 @@ function TaskPanel(props: any) {
         justify={"space-between"}
         align={"center"}
       >
-        <div>任务列表</div>
+        <div className={styles.taskHeaderTitle}>任务列表</div>
         <Button icon={<PlusOutlined />} onClick={handleAddGroup}>
           新增分组
         </Button>
