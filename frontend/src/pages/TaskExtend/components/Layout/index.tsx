@@ -36,7 +36,7 @@ function Layout(props: any) {
     <div className={styles.layout}>
       <div className={styles.leftPanel}>
         <Flex justify="space-between" align="center">
-          <div>任务列表</div>
+          <div className={styles.taskTitle}>日期列表</div>
           <DateTaskModal onSuccess={getTaskList} />
         </Flex>
         <NavList dateList={dateList} />

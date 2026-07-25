@@ -3,6 +3,7 @@ import { Button, DatePicker, Flex, message, Modal } from "antd";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { TaskExtend } from "../../../../../bindings/api/services";
+import styles from "./index.module.less";
 
 function DateTaskModal(props: any) {
   const { onSuccess } = props;
@@ -16,7 +17,7 @@ function DateTaskModal(props: any) {
   const createDateTask = async () => {
     try {
       const currentDate = createDate.format("YYYYMMDD");
-      const targetDate = extendDate.format("YYYYMMDD")
+      const targetDate = extendDate.format("YYYYMMDD");
       await TaskExtend.CreateDateTask(currentDate, targetDate);
       onSuccess?.();
     } catch (err: any) {
@@ -25,13 +26,15 @@ function DateTaskModal(props: any) {
   };
 
   return (
-    <div>
-      <Button
-        icon={<PlusCircleOutlined />}
+    <>
+      <div
         onClick={() => {
           setDateTaskModalVisible(true);
         }}
-      />
+        className={styles.addTaskButton}
+      >
+        <PlusCircleOutlined />
+      </div>
       <Modal
         title="新建任务日期"
         open={dateTaskModalVisible}
@@ -50,7 +53,7 @@ function DateTaskModal(props: any) {
             </Button>
             <Button
               onClick={() => {
-                createDateTask()
+                createDateTask();
                 setDateTaskModalVisible(false);
               }}
               type="primary"
@@ -60,28 +63,28 @@ function DateTaskModal(props: any) {
           </Flex>
         }
       >
-        <Flex vertical gap={12}>
-          <Flex align="center" gap={8}>
-          创建任务的日期
-          <DatePicker
-            value={createDate}
-            onChange={(date, dateString) => {
-              setCreateDate(date);
-            }}
-          />
-        </Flex>
-        <Flex align="center" gap={8}>
-          继承自
-          <DatePicker
-            value={extendDate}
-            onChange={(date, dateString) => {
-              setExtendDate(date);
-            }}
-          />
-        </Flex>
+        <Flex className={styles.taskModalBody} vertical gap={12}>
+          <Flex align="center" gap={8} justify="space-between">
+            创建任务的日期
+            <DatePicker
+              value={createDate}
+              onChange={(date, dateString) => {
+                setCreateDate(date);
+              }}
+            />
+          </Flex>
+          <Flex align="center" gap={8} justify="space-between">
+            继承自
+            <DatePicker
+              value={extendDate}
+              onChange={(date, dateString) => {
+                setExtendDate(date);
+              }}
+            />
+          </Flex>
         </Flex>
       </Modal>
-    </div>
+    </>
   );
 }
 
