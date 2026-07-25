@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./index.less";
 import { Button, Flex, Input } from "antd";
 import { CheckOutlined, CloseOutlined, EditOutlined } from "@ant-design/icons";
@@ -9,6 +9,28 @@ function EditableText(props: any) {
 
   const [isEditing, setIsEditing] = useState(false);
   const [innerValue, setInnerValue] = useState("");
+  const inputRef = useRef<any>(null);
+
+  const save = () => {
+    setIsEditing(false);
+    onChange?.(innerValue);
+  };
+
+  const cancel = () => {
+    setIsEditing(false);
+    setInnerValue(value);
+  };
+
+  useEffect(() => {
+    if (isEditing) {
+      inputRef.current?.focus();
+    }
+  }, [isEditing]);
+
+  const turnOnEditing = () => {
+    setIsEditing(true);
+    setInnerValue(value);
+  };
 
   return (
     <div className={classNames("editable-text", className)}>
@@ -16,35 +38,28 @@ function EditableText(props: any) {
         <Flex gap={4}>
           <Input
             className="editable-text-input"
+            ref={inputRef}
             value={innerValue}
             onChange={(e) => setInnerValue(e.target.value)}
-          />
-          <Button
-            onClick={() => {
-              setIsEditing(false);
-              onChange?.(innerValue);
+            onPressEnter={save}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                e.preventDefault();
+                cancel();
+              }
             }}
-            type="text"
-            icon={<CheckOutlined />}
           />
-          <Button
-            onClick={() => {
-              setIsEditing(false);
-              setInnerValue(value);
-            }}
-            type="text"
-            icon={<CloseOutlined />}
-          />
+          <Button onClick={save} type="text" icon={<CheckOutlined />} />
+          <Button onClick={cancel} type="text" icon={<CloseOutlined />} />
         </Flex>
       ) : (
         <Flex>
-          <div className="editable-text-value">{value}</div>
+          <div className="editable-text-value" onClick={turnOnEditing}>
+            {value}
+          </div>
           {editable && (
             <Button
-              onClick={() => {
-                setIsEditing(true);
-                setInnerValue(value);
-              }}
+              onClick={turnOnEditing}
               type="text"
               icon={<EditOutlined />}
             />

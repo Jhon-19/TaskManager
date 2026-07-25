@@ -3,7 +3,7 @@ import styles from "./index.module.less";
 import { useTaskExtendContext } from "../../contexts/TaskExtendContext";
 import EditableText from "@/components/EditableText";
 import { TaskExtend } from "../../../../../bindings/api/services";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, FileTextOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import MarkdownEditor from "@/components/MarkdownEditor";
 
@@ -15,7 +15,7 @@ function Task(props: any) {
   const { title, id, detail } = task || {};
 
   const [detailDrawerVisible, setDetailDrawerVisible] = useState(false);
-  const [detailValue, setDetailValue] = useState(detail)
+  const [detailValue, setDetailValue] = useState(detail);
 
   const updateTask = async (key, value) => {
     try {
@@ -44,13 +44,13 @@ function Task(props: any) {
   };
 
   const handleDetailConfirm = () => {
-    updateTask('detail', detailValue)
+    updateTask("detail", detailValue);
     setDetailDrawerVisible(false);
   };
 
   const handleDetailClose = () => {
-    setDetailDrawerVisible(false)
-  }
+    setDetailDrawerVisible(false);
+  };
 
   return (
     <>
@@ -59,19 +59,21 @@ function Task(props: any) {
           checked={task?.isCompleted}
           onChange={handleTaskCheckedChange}
         />
-        <div
-          className={styles.editableTextWrapper}
-          onClick={() => {
-            setDetailDrawerVisible(true);
-          }}
-        >
+        <Flex className={styles.editableTextWrapper}>
           <EditableText
             value={title}
             onChange={(newValue) => {
               updateTask("title", newValue);
             }}
           />
-        </div>
+          <Button
+            icon={<FileTextOutlined />}
+            type="text"
+            onClick={() => {
+              setDetailDrawerVisible(true);
+            }}
+          />
+        </Flex>
         <Button
           danger
           type="text"
