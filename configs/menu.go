@@ -3,15 +3,23 @@ package configs
 import (
 	"context"
 	"log"
+	"net/http"
+	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"github.com/wailsapp/wails/v3/pkg/updater"
 	"github.com/wailsapp/wails/v3/pkg/updater/providers/github"
 )
 
-var gh, _ = github.New(github.Config{Repository: "Jhon-19/TaskManager"})
+const currentVersion = "1.0.0"
 
-const currentVersion = "0.0.1"
+var gh, _ = github.New(github.Config{
+	Repository:    "Jhon-19/TaskManager",
+	ChecksumAsset: "SHA256SUMS",
+	HTTPClient: &http.Client{
+		Timeout: 10 * time.Minute,
+	},
+})
 
 func InitMenu(app *application.App) {
 	if err := app.Updater.Init(updater.Config{
