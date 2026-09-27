@@ -10,11 +10,11 @@
     <Installer
         Path="taskmanager"
         Arguments=""
-        InstallLocation="C:\Program Files\My Company\My Product">
+        InstallLocation="C:\Program Files\My Company\TaskManager">
     </Installer>
     <PackageInformation
-        PackageName="My Product"
-        PackageDisplayName="My Product"
+        PackageName="TaskManager"
+        PackageDisplayName="TaskManager"
         PublisherName="CN=My Company"
         PublisherDisplayName="My Company"
         Version="0.1.0.0"
@@ -27,7 +27,7 @@
             <Application
                 Id="com.example.taskmanager"
                 Description="A TaskManager application"
-                DisplayName="My Product"
+                DisplayName="TaskManager"
                 ExecutableName="taskmanager"
                 EntryPoint="Windows.FullTrustApplication">
                 
@@ -41,7 +41,7 @@
         </Dependencies>
         <Properties>
             <Framework>false</Framework>
-            <DisplayName>My Product</DisplayName>
+            <DisplayName>TaskManager</DisplayName>
             <PublisherDisplayName>My Company</PublisherDisplayName>
             <Description>A TaskManager application</Description>
             <Logo>Assets\AppIcon.png</Logo>

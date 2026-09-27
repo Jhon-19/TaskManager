@@ -6,6 +6,8 @@ import (
 
 	"api/services"
 
+	"api/configs"
+
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
@@ -16,9 +18,6 @@ import (
 
 //go:embed all:frontend/dist
 var assets embed.FS
-
-func init() {
-}
 
 // main function serves as the application's entry point. It initializes the application, creates a window,
 // and starts a goroutine that emits a time-based event every second. It subsequently runs the application and
@@ -63,6 +62,8 @@ func main() {
 		BackgroundColour: application.NewRGB(6, 7, 15),
 		URL:              "/",
 	})
+
+	configs.InitMenu(app)
 
 	// Run the application. This blocks until the application has been exited.
 	err := app.Run()
