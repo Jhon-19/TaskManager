@@ -2,12 +2,8 @@
 bin
 frontend/dist
 frontend/node_modules
-build/linux/appimage/build
-build/windows/nsis/MicrosoftEdgeWebview2Setup.exe
-# Mobile generated (per-machine; overlays hold absolute paths)
-build/ios/xcode/overlay.json
-build/ios/xcode/gen/
-build/android/overlay.json
-build/android/gen/
+
+# Build 目录产物（整体忽略，覆盖下方历史细项）
+build/
 
 .DS_Store
