@@ -3,7 +3,4 @@ bin
 frontend/dist
 frontend/node_modules
 
-# Build 目录产物（整体忽略，覆盖下方历史细项）
-build/
-
 .DS_Store
