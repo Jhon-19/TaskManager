@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "@ant-design/icons": "6.x",
+    "@dnd-kit/react": "^0.5.0",
     "@wailsio/runtime": "latest",
     "antd": "^6.5.0",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.21",
+    "immerse": "^1.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "7",

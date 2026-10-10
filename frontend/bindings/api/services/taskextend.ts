@@ -41,12 +41,20 @@ export function GetTaskData(date: string): $CancellablePromise<constants$0.TaskG
     return $Call.ByID(2356829788, date);
 }
 
+export function UpdateDateTaskData(date: string, dateTaskData: string): $CancellablePromise<void> {
+    return $Call.ByID(2549477171, date, dateTaskData);
+}
+
 export function UpdateTask(date: string, taskGroupId: string, taskId: string, updatedTask: constants$0.UpdateTask): $CancellablePromise<void> {
     return $Call.ByID(1562967583, date, taskGroupId, taskId, updatedTask);
 }
 
 export function UpdateTaskGroup(date: string, taskGroupId: string, newName: string): $CancellablePromise<void> {
     return $Call.ByID(1255901926, date, taskGroupId, newName);
+}
+
+export function UpdateTaskGroupData(date: string, taskGroupId: string, taskGroupData: string): $CancellablePromise<void> {
+    return $Call.ByID(811704774, date, taskGroupId, taskGroupData);
 }
 
 export function UploadImage(name: string, data: number[] | null): $CancellablePromise<string> {

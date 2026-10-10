@@ -310,3 +310,34 @@ func (t *TaskExtend) UploadImage(name string, data []uint) (string, error) {
 	// 返回相对 URL，webview 以当前页面 origin 解析后由 Wails AssetServer 中间件服务
 	return imageURL(filename), nil
 }
+
+func (t *TaskExtend) UpdateDateTaskData(date string, dateTaskData string) error {
+	var taskGroups []constants.TaskGroup
+	if err := utils.UnmarshalJSON([]byte(dateTaskData), &taskGroups); err != nil {
+		return fmt.Errorf("解析json失败: %w", err)
+	}
+
+	return saveTaskData(taskGroups, date)
+}
+
+func (t *TaskExtend) UpdateTaskGroupData(date string, taskGroupId string, taskGroupData string) error {
+	taskGroups, err := t.GetTaskData((date))
+
+	if err != nil {
+		return fmt.Errorf("获取任务数据失败: %w", err)
+	}
+
+	var tasks []constants.Task
+	if err := utils.UnmarshalJSON([]byte(taskGroupData), &tasks); err != nil {
+		return fmt.Errorf("解析json失败: %w", err)
+	}
+
+	for index, taskGroup := range taskGroups {
+		if taskGroup.ID == taskGroupId {
+			taskGroups[index].Tasks = tasks
+			break
+		}
+	}
+
+	return saveTaskData(taskGroups, date)
+}
