@@ -41,7 +41,11 @@ function EditableText(props: any) {
             ref={inputRef}
             value={innerValue}
             onChange={(e) => setInnerValue(e.target.value)}
-            onPressEnter={save}
+            onPressEnter={(e) => {
+              // 中文输入法 composing 期间的回车不应触发保存
+              if (e.nativeEvent.isComposing || (e.nativeEvent as any).keyCode === 229) return;
+              save();
+            }}
             onKeyDown={(e) => {
               if (e.key === "Escape") {
                 e.preventDefault();

@@ -14,6 +14,25 @@ function DateTaskModal(props: any) {
   const [createDate, setCreateDate] = useState<any>(dayjs());
   const [extendDate, setExtendDate] = useState<any>(dayjs().subtract(1, "day"));
 
+  // 打开弹窗时，从当前日期开始往前查找，取上一个有任务的日期作为默认继承日期
+  const initExtendDate = async () => {
+    try {
+      const dateList = await TaskExtend.GetDateList(0, 20);
+      if (!Array.isArray(dateList) || dateList.length === 0) return;
+      let candidate = dayjs().subtract(1, "day");
+      // 最多往前查找一年，避免空列表或极远日期导致死循环
+      for (let i = 0; i < 365; i++) {
+        if (dateList.includes(candidate.format("YYYYMMDD"))) {
+          setExtendDate(candidate);
+          return;
+        }
+        candidate = candidate.subtract(1, "day");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const createDateTask = async () => {
     try {
       const currentDate = createDate.format("YYYYMMDD");
@@ -29,6 +48,7 @@ function DateTaskModal(props: any) {
     <>
       <div
         onClick={() => {
+          initExtendDate();
           setDateTaskModalVisible(true);
         }}
         className={styles.addTaskButton}
