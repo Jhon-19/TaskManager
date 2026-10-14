@@ -46,6 +46,7 @@ function EditableText(props: any) {
               if (e.nativeEvent.isComposing || (e.nativeEvent as any).keyCode === 229) return;
               save();
             }}
+            onBlur={() => save()}
             onKeyDown={(e) => {
               if (e.key === "Escape") {
                 e.preventDefault();
@@ -53,8 +54,18 @@ function EditableText(props: any) {
               }
             }}
           />
-          <Button onClick={save} type="text" icon={<CheckOutlined />} />
-          <Button onClick={cancel} type="text" icon={<CloseOutlined />} />
+          <Button
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={save}
+            type="text"
+            icon={<CheckOutlined />}
+          />
+          <Button
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={cancel}
+            type="text"
+            icon={<CloseOutlined />}
+          />
         </Flex>
       ) : (
         <Flex>
