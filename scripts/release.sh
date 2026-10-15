@@ -45,6 +45,13 @@ fi
 # ------------------------------------------------------------------
 # 交互输入
 # ------------------------------------------------------------------
+# 先读取并显示当前版本号（来自 VERSION 单一真相源）
+CURRENT_VER=""
+if [ -f "${ROOT_DIR}/VERSION" ]; then
+    CURRENT_VER="$(tr -d '[:space:]' < "${ROOT_DIR}/VERSION")"
+fi
+info "当前版本：${CURRENT_VER:-（未设置，VERSION 文件不存在）}"
+
 info "请输入发布信息："
 
 VERSION=""
@@ -68,6 +75,27 @@ info "说明   : ${NOTES}"
 printf "确认发布？[y/N] "
 read -r CONFIRM
 [ "$CONFIRM" = "y" ] || [ "$CONFIRM" = "Y" ] || die "已取消。"
+
+# ------------------------------------------------------------------
+# 写入版本号到 VERSION（单一真相源）并提交推送
+#   VERSION 文件是项目唯一的版本号真相源：
+#   - Go 运行时版本：go build 时通过 -ldflags -X 注入 configs.currentVersion
+#   - 产物 .app 版本：create:app:bundle 时用 PlistBuddy 写入 Info.plist
+#   因此发布时只需更新 VERSION 文件并提交，构建链路会自动同步其余位置。
+# ------------------------------------------------------------------
+NUMVER="${VERSION#v}"  # 去掉 v 前缀：v0.2.0 -> 0.2.0
+info "写入 VERSION 文件 -> ${NUMVER}"
+echo "$NUMVER" > "${ROOT_DIR}/VERSION"
+
+cd "$ROOT_DIR"
+if [ -n "$(git status --porcelain VERSION)" ]; then
+    git add VERSION
+    git commit -m "chore: release ${VERSION}"
+    git push
+    ok "版本号已提交并推送：${VERSION}"
+else
+    info "VERSION 未变化（已是 ${NUMVER}），跳过提交。"
+fi
 
 # ------------------------------------------------------------------
 # 构建 .app
