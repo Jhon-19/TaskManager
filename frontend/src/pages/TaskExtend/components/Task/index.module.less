@@ -1,3 +1,7 @@
+.task {
+  padding: 4px 0;
+}
+
 .editableTextWrapper {
   flex: 1;
   cursor: pointer;
@@ -7,4 +11,21 @@
       flex: 1;
     }
   }
+}
+
+.dragHandle {
+  cursor: grab;
+  color: #94A3B8;
+  flex-shrink: 0;
+  align-self: center;
+  &:hover {
+    color: #475569;
+  }
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.dragging {
+  opacity: 0.5;
 }

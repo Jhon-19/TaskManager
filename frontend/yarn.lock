@@ -676,11 +676,6 @@ errno@^0.1.1:
   dependencies:
     prr "~1.0.1"
 
-escape-string-regexp@1.0.5:
-  version "1.0.5"
-  resolved "https://registry.npmmirror.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz"
-  integrity sha512-vbRorB5FUQWvla16U8R/qgaFIya2qGzwDrNmCZuYKrbdSUMG6I1ZCGQRefkRVhuOkIGVne7BQ35DSfo1qvJqFg==
-
 fdir@^6.5.0:
   version "6.5.0"
   resolved "https://registry.npmmirror.com/fdir/-/fdir-6.5.0.tgz"
@@ -708,13 +703,10 @@ image-size@~0.5.0:
   resolved "https://registry.npmmirror.com/image-size/-/image-size-0.5.5.tgz"
   integrity sha512-6TDAlDPZxUFCv+fuOkIoXT/V/f3Qbq8e37p+YOiYrUv3v9cc3/6x78VdfPgFVaB9dZYeLUfKgHRebpkm/oP2VQ==
 
-immerse@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.npmmirror.com/immerse/-/immerse-1.1.0.tgz"
-  integrity sha512-l7a5al2Jnrtg9H+a92zHCk7uozWN8AZSyCuNtqv79q2vkPRTBpTDqJ/ZOUA/oFDU7ht5FhHGXNvM6uFjnVCTDg==
-  dependencies:
-    escape-string-regexp "1.0.5"
-    lodash "^4.5.1"
+immer@^11.1.21:
+  version "11.1.21"
+  resolved "https://registry.npmmirror.com/immer/-/immer-11.1.21.tgz"
+  integrity sha512-bZSadeCPGdaY5/qRLgr6mDSH1ra21rD3rqpiWk7+QTr4ayYPTE9qZYdLh/NdPhMe0wSrTvHD/Lk8q5EwhUs0aw==
 
 is-mobile@^5.0.0:
   version "5.0.0"
@@ -777,11 +769,6 @@ lightningcss@^1.32.0:
     lightningcss-linux-x64-musl "1.32.0"
     lightningcss-win32-arm64-msvc "1.32.0"
     lightningcss-win32-x64-msvc "1.32.0"
-
-lodash@^4.5.1:
-  version "4.18.1"
-  resolved "https://registry.npmmirror.com/lodash/-/lodash-4.18.1.tgz"
-  integrity sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==
 
 loose-envify@^1.1.0:
   version "1.4.0"

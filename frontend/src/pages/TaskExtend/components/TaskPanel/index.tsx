@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useTaskExtendContext } from "../../contexts/TaskExtendContext";
 import { TaskExtend } from "../../../../../bindings/api/services";
 import { Button, Flex, message } from "antd";
+import { DragDropProvider, DragEndEvent } from "@dnd-kit/react";
+import { produce } from "immer";
 import styles from "./index.module.less";
 import TaskGroup from "../TaskGroup";
 import { PlusOutlined } from "@ant-design/icons";
@@ -35,6 +37,31 @@ function TaskPanel(props: any) {
       });
   };
 
+  const handleGroupDragEnd = (event: DragEndEvent) => {
+    if (event.canceled) return;
+    const sourceId = event.operation.source?.id;
+    const targetId = event.operation.target?.id;
+    if (!sourceId || !targetId || sourceId === targetId) return;
+
+    const from = taskGroups.findIndex((g) => g.id === sourceId);
+    const to = taskGroups.findIndex((g) => g.id === targetId);
+    if (from === -1 || to === -1) return;
+
+    const next = produce(taskGroups, (draft) => {
+      const [moved] = draft.splice(from, 1);
+      draft.splice(to, 0, moved);
+    });
+
+    // 乐观更新
+    setTaskGroups(next);
+    TaskExtend.UpdateDateTaskData(selectedDate, JSON.stringify(next)).catch(
+      (err: any) => {
+        message.error(err?.message || "排序保存失败");
+        getTaskGroups();
+      }
+    );
+  };
+
   return (
     <div>
       <Flex
@@ -47,16 +74,19 @@ function TaskPanel(props: any) {
           新增分组
         </Button>
       </Flex>
-      <Flex vertical={true} gap={12} className={styles.taskGroups}>
-        {Array.isArray(taskGroups) &&
-          taskGroups.map((taskGroup: any) => (
-            <TaskGroup
-              key={taskGroup.id}
-              taskGroup={taskGroup}
-              onRefresh={getTaskGroups}
-            />
-          ))}
-      </Flex>
+      <DragDropProvider onDragEnd={handleGroupDragEnd}>
+        <Flex vertical={true} gap={12} className={styles.taskGroups}>
+          {Array.isArray(taskGroups) &&
+            taskGroups.map((taskGroup: any, index: number) => (
+              <TaskGroup
+                key={taskGroup.id}
+                taskGroup={taskGroup}
+                groupIndex={index}
+                onRefresh={getTaskGroups}
+              />
+            ))}
+        </Flex>
+      </DragDropProvider>
     </div>
   );
 }

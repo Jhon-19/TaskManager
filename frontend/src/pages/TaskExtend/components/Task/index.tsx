@@ -3,12 +3,14 @@ import styles from "./index.module.less";
 import { useTaskExtendContext } from "../../contexts/TaskExtendContext";
 import EditableText from "@/components/EditableText";
 import { TaskExtend } from "../../../../../bindings/api/services";
-import { DeleteOutlined, FileTextOutlined } from "@ant-design/icons";
+import { DeleteOutlined, FileTextOutlined, HolderOutlined } from "@ant-design/icons";
 import { useState } from "react";
+import { useSortable } from "@dnd-kit/react/sortable";
+import classNames from "classnames";
 import MarkdownEditor from "@/components/MarkdownEditor";
 
 function Task(props: any) {
-  const { task, taskGroupId, onRefresh } = props;
+  const { task, taskGroupId, taskIndex, onRefresh } = props;
 
   const { selectedDate } = useTaskExtendContext();
 
@@ -16,6 +18,9 @@ function Task(props: any) {
 
   const [detailDrawerVisible, setDetailDrawerVisible] = useState(false);
   const [detailValue, setDetailValue] = useState(detail);
+
+  // 任务项可拖（外层 DragDropProvider 在 TaskGroup）
+  const { ref, isDragging } = useSortable({ id, index: taskIndex });
 
   const updateTask = async (key, value) => {
     try {
@@ -54,7 +59,12 @@ function Task(props: any) {
 
   return (
     <>
-      <Flex gap={8} className={styles.task}>
+      <Flex
+        gap={8}
+        ref={ref as any}
+        className={classNames(styles.task, { [styles.dragging]: isDragging })}
+      >
+        <HolderOutlined className={styles.dragHandle} />
         <Checkbox
           checked={task?.isCompleted}
           onChange={handleTaskCheckedChange}

@@ -9,11 +9,11 @@ import { Call as $Call, CancellablePromise as $CancellablePromise } from "@wails
 // @ts-ignore: Unused imports
 import * as constants$0 from "../constants/models.js";
 
-export function AddTask(date: string, taskGroupId: string): $CancellablePromise<void> {
+export function AddTask(date: string, taskGroupId: string): $CancellablePromise<string> {
     return $Call.ByID(4056287595, date, taskGroupId);
 }
 
-export function AddTaskGroup(date: string, groupName: string): $CancellablePromise<void> {
+export function AddTaskGroup(date: string, groupName: string): $CancellablePromise<string> {
     return $Call.ByID(349401474, date, groupName);
 }
 

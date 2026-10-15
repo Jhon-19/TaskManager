@@ -147,17 +147,19 @@ func saveTaskData(taskGroups []constants.TaskGroup, date string) error {
 	return nil
 }
 
-func (t *TaskExtend) AddTask(date string, taskGroupId string) error {
+func (t *TaskExtend) AddTask(date string, taskGroupId string) (error, string) {
 	taskGroups, err := t.GetTaskData(date)
 
 	if err != nil {
-		return fmt.Errorf("获取任务数据失败: %w", err)
+		return fmt.Errorf("获取任务数据失败: %w", err), ""
 	}
 
+	var newTaskId string
 	for index, taskGroup := range taskGroups {
 		if taskGroup.ID == taskGroupId {
+			newTaskId = uuid.NewString()
 			taskGroups[index].Tasks = append(taskGroup.Tasks, constants.Task{
-				ID:          uuid.NewString(),
+				ID:          newTaskId,
 				Title:       "新任务",
 				Detail:      "",
 				IsCompleted: false,
@@ -166,7 +168,7 @@ func (t *TaskExtend) AddTask(date string, taskGroupId string) error {
 		}
 	}
 
-	return saveTaskData(taskGroups, date)
+	return saveTaskData(taskGroups, date), newTaskId
 }
 
 func updateTaskElement(srcTask *constants.Task, updatedTask constants.UpdateTask) {
@@ -234,22 +236,23 @@ func (t *TaskExtend) DeleteTask(date string, taskGroupId string, taskId string) 
 	return saveTaskData(taskGroups, date)
 }
 
-func (t *TaskExtend) AddTaskGroup(date string, groupName string) error {
+func (t *TaskExtend) AddTaskGroup(date string, groupName string) (error, string) {
 	taskGroups, err := t.GetTaskData(date)
 
 	if err != nil {
-		return fmt.Errorf("获取任务数据失败: %w", err)
+		return fmt.Errorf("获取任务数据失败: %w", err), ""
 	}
 
+	newTaskGroupId := uuid.NewString()
 	newGroup := constants.TaskGroup{
-		ID:    uuid.NewString(),
+		ID:    newTaskGroupId,
 		Name:  groupName,
 		Tasks: []constants.Task{},
 	}
 
 	taskGroups = append(taskGroups, newGroup)
 
-	return saveTaskData(taskGroups, date)
+	return saveTaskData(taskGroups, date), newTaskGroupId
 }
 
 func (t *TaskExtend) UpdateTaskGroup(date string, taskGroupId string, newName string) error {
