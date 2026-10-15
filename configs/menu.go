@@ -11,8 +11,6 @@ import (
 	"github.com/wailsapp/wails/v3/pkg/updater/providers/github"
 )
 
-const currentVersion = "1.0.0"
-
 var gh, _ = github.New(github.Config{
 	Repository:    "Jhon-19/TaskManager",
 	ChecksumAsset: "SHA256SUMS",
