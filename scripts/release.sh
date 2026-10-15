@@ -50,27 +50,31 @@ CURRENT_VER=""
 if [ -f "${ROOT_DIR}/VERSION" ]; then
     CURRENT_VER="$(tr -d '[:space:]' < "${ROOT_DIR}/VERSION")"
 fi
-info "当前版本：${CURRENT_VER:-（未设置，VERSION 文件不存在）}"
+info "当前版本：v${CURRENT_VER:-（未设置，VERSION 文件不存在）}"
 
 info "请输入发布信息："
 
 VERSION=""
 while true; do
-    read -r -p "  版本号 (如 v0.1.0): " VERSION
+    read -r -p "  版本号 (如 0.1.0): " VERSION
     VERSION="${VERSION// /}"  # 去除首尾空白
     [ -n "$VERSION" ] && break
     warn "版本号不能为空。"
 done
+
+# 输入省略 v 前缀；内部统一构造带 v 的发布标签
+NUMVER="${VERSION#v}"      # 去掉可能的 v 前缀：0.1.0 / v0.1.0 -> 0.1.0
+RELEASE_TAG="v${NUMVER}"   # GitHub Release 标签：v0.1.0
 
 if [ -n "${RELEASE_NOTES:-}" ]; then
     NOTES="$RELEASE_NOTES"
     info "使用环境变量 RELEASE_NOTES 作为发布说明。"
 else
     read -r -p "  发布说明 (可留空): " NOTES
-    NOTES="${NOTES:-Release ${VERSION}}"
+    NOTES="${NOTES:-Release ${RELEASE_TAG}}"
 fi
 
-info "版本号 : ${VERSION}"
+info "版本号 : ${RELEASE_TAG}"
 info "说明   : ${NOTES}"
 printf "确认发布？[y/N] "
 read -r CONFIRM
@@ -83,16 +87,15 @@ read -r CONFIRM
 #   - 产物 .app 版本：create:app:bundle 时用 PlistBuddy 写入 Info.plist
 #   因此发布时只需更新 VERSION 文件并提交，构建链路会自动同步其余位置。
 # ------------------------------------------------------------------
-NUMVER="${VERSION#v}"  # 去掉 v 前缀：v0.2.0 -> 0.2.0
 info "写入 VERSION 文件 -> ${NUMVER}"
 echo "$NUMVER" > "${ROOT_DIR}/VERSION"
 
 cd "$ROOT_DIR"
 if [ -n "$(git status --porcelain VERSION)" ]; then
     git add VERSION
-    git commit -m "chore: release ${VERSION}"
+    git commit -m "chore: release ${RELEASE_TAG}"
     git push
-    ok "版本号已提交并推送：${VERSION}"
+    ok "版本号已提交并推送：${RELEASE_TAG}"
 else
     info "VERSION 未变化（已是 ${NUMVER}），跳过提交。"
 fi
@@ -128,10 +131,10 @@ sed 's/^/    /' SHA256SUMS
 # ------------------------------------------------------------------
 # 发布到 GitHub Releases
 # ------------------------------------------------------------------
-info "创建 GitHub Release ${VERSION}..."
-gh release create "$VERSION" \
-    --title "$VERSION" \
+info "创建 GitHub Release ${RELEASE_TAG}..."
+gh release create "$RELEASE_TAG" \
+    --title "$RELEASE_TAG" \
     --notes "$NOTES" \
     SHA256SUMS "$ZIP_NAME"
 
-ok "发布完成：${VERSION}"
+ok "发布完成：${RELEASE_TAG}"
