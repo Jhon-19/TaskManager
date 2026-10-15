@@ -1,4 +1,4 @@
-import { Button, Flex, message } from "antd";
+import { Button, Flex, message, Popconfirm } from "antd";
 import { useEffect, useState } from "react";
 import styles from "./index.module.less";
 import { DeleteFilled, HolderOutlined, PlusSquareOutlined } from "@ant-design/icons";
@@ -12,13 +12,15 @@ import { produce } from "immer";
 import classNames from "classnames";
 
 function TaskGroup(props: any) {
-  const { taskGroup, groupIndex, onRefresh } = props;
+  const { taskGroup, groupIndex, onRefresh, defaultEditing } = props;
 
   const { selectedDate } = useTaskExtendContext();
 
   const { id, name, tasks: propTasks } = taskGroup || {};
 
   const isDefaultGroup = name === "默认任务组";
+
+  const [newTaskId, setNewTaskId] = useState<string | null>(null);
 
   // 分组自身可拖（外层 DragDropProvider 在 TaskPanel）
   const { ref: groupRef, isDragging } = useSortable({
@@ -35,7 +37,8 @@ function TaskGroup(props: any) {
 
   const handleAddTask = () => {
     TaskExtend.AddTask(selectedDate, id)
-      .then(() => {
+      .then((newId: string) => {
+        setNewTaskId(newId);
         onRefresh?.();
       })
       .catch((err) => {
@@ -102,15 +105,24 @@ function TaskGroup(props: any) {
             value={name}
             onChange={handleUpdateTaskGroup}
             editable={!isDefaultGroup}
+            defaultEditing={defaultEditing}
           />
         </Flex>
         {!isDefaultGroup && (
-          <Button
-            danger
-            type="text"
-            icon={<DeleteFilled />}
-            onClick={handleDeleteTaskGroup}
-          />
+          <Popconfirm
+            title="确认删除该分组？"
+            description="分组下的所有任务也将一并删除"
+            okText="删除"
+            cancelText="取消"
+            okButtonProps={{ danger: true }}
+            onConfirm={handleDeleteTaskGroup}
+          >
+            <Button
+              danger
+              type="text"
+              icon={<DeleteFilled />}
+            />
+          </Popconfirm>
         )}
       </Flex>
       <DragDropProvider onDragEnd={handleTaskDragEnd}>
@@ -122,6 +134,7 @@ function TaskGroup(props: any) {
                 task={task}
                 taskGroupId={id}
                 taskIndex={index}
+                defaultEditing={task.id === newTaskId}
                 onRefresh={onRefresh}
               />
             ))}

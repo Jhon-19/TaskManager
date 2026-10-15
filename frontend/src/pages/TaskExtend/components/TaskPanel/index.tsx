@@ -14,6 +14,7 @@ function TaskPanel(props: any) {
   const { selectedDate } = useTaskExtendContext();
 
   const [taskGroups, setTaskGroups] = useState<any[]>([]);
+  const [newGroupId, setNewGroupId] = useState<string | null>(null);
 
   const getTaskGroups = () => {
     TaskExtend.GetTaskData(selectedDate).then((res: any) => {
@@ -29,7 +30,8 @@ function TaskPanel(props: any) {
 
   const handleAddGroup = () => {
     TaskExtend.AddTaskGroup(selectedDate, "新的分组")
-      .then((res: any) => {
+      .then((newGroupId: string) => {
+        setNewGroupId(newGroupId);
         getTaskGroups();
       })
       .catch((err: any) => {
@@ -82,6 +84,7 @@ function TaskPanel(props: any) {
                 key={taskGroup.id}
                 taskGroup={taskGroup}
                 groupIndex={index}
+                defaultEditing={taskGroup.id === newGroupId}
                 onRefresh={getTaskGroups}
               />
             ))}

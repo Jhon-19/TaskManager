@@ -1,4 +1,4 @@
-import { Button, Checkbox, Drawer, Flex, message } from "antd";
+import { Button, Checkbox, Drawer, Flex, message, Popconfirm } from "antd";
 import styles from "./index.module.less";
 import { useTaskExtendContext } from "../../contexts/TaskExtendContext";
 import EditableText from "@/components/EditableText";
@@ -10,7 +10,7 @@ import classNames from "classnames";
 import MarkdownEditor from "@/components/MarkdownEditor";
 
 function Task(props: any) {
-  const { task, taskGroupId, taskIndex, onRefresh } = props;
+  const { task, taskGroupId, taskIndex, onRefresh, defaultEditing } = props;
 
   const { selectedDate } = useTaskExtendContext();
 
@@ -72,6 +72,7 @@ function Task(props: any) {
         <Flex className={styles.editableTextWrapper}>
           <EditableText
             value={title}
+            defaultEditing={defaultEditing}
             onChange={(newValue) => {
               updateTask("title", newValue);
             }}
@@ -84,12 +85,19 @@ function Task(props: any) {
             }}
           />
         </Flex>
-        <Button
-          danger
-          type="text"
-          icon={<DeleteOutlined />}
-          onClick={deleteTask}
-        />
+        <Popconfirm
+          title="确认删除该任务？"
+          okText="删除"
+          cancelText="取消"
+          okButtonProps={{ danger: true }}
+          onConfirm={deleteTask}
+        >
+          <Button
+            danger
+            type="text"
+            icon={<DeleteOutlined />}
+          />
+        </Popconfirm>
       </Flex>
       <Drawer
         title="任务详情"

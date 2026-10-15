@@ -5,9 +5,9 @@ import { CheckOutlined, CloseOutlined, EditOutlined } from "@ant-design/icons";
 import classNames from "classnames";
 
 function EditableText(props: any) {
-  const { className, value, onChange, editable = true } = props;
+  const { className, value, onChange, editable = true, defaultEditing = false } = props;
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(!!defaultEditing);
   const [innerValue, setInnerValue] = useState("");
   const inputRef = useRef<any>(null);
 

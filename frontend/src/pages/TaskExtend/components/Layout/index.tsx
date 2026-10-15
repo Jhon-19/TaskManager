@@ -39,7 +39,9 @@ function Layout(props: any) {
           <div className={styles.taskTitle}>日期列表</div>
           <DateTaskModal onSuccess={getTaskList} />
         </Flex>
-        <NavList dateList={dateList} />
+        <div className={styles.navScroll}>
+          <NavList dateList={dateList} />
+        </div>
       </div>
       <div className={styles.rightPanel}>{children}</div>
     </div>
