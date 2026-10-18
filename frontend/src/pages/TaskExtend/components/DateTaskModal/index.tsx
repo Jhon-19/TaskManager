@@ -3,6 +3,8 @@ import { Button, DatePicker, Flex, message, Modal } from "antd";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { TaskExtend } from "../../../../../bindings/api/services";
+import { loadTaskConfig } from "../../../../biz/taskConfig";
+import { resolveExtendDate, todayStr } from "../../../../biz/extendSource";
 import styles from "./index.module.less";
 
 function DateTaskModal(props: any) {
@@ -14,29 +16,38 @@ function DateTaskModal(props: any) {
   const [createDate, setCreateDate] = useState<any>(dayjs());
   const [extendDate, setExtendDate] = useState<any>(dayjs().subtract(1, "day"));
 
-  // 打开弹窗时，从当前日期开始往前查找，取上一个有任务的日期作为默认继承日期
+  // 打开弹窗时，根据继承类型设置默认继承日期
   const initExtendDate = async () => {
     try {
-      const dateList = await TaskExtend.GetDateList(0, 20);
-      if (!Array.isArray(dateList) || dateList.length === 0) return;
-      let candidate = dayjs().subtract(1, "day");
-      // 最多往前查找一年，避免空列表或极远日期导致死循环
-      for (let i = 0; i < 365; i++) {
-        if (dateList.includes(candidate.format("YYYYMMDD"))) {
-          setExtendDate(candidate);
-          return;
-        }
-        candidate = candidate.subtract(1, "day");
+      const config = await loadTaskConfig();
+      if (config.extendFrom === "none") {
+        setExtendDate(null);
+        return;
       }
+      if (config.extendFrom === "yesterday") {
+        setExtendDate(dayjs().subtract(1, "day"));
+        return;
+      }
+      // last：取日期列表中最近一个有任务的日期（列表倒序，第一个早于今天的即目标）
+      const dateList = await TaskExtend.GetDateList(0, config.dateListCount);
+      const source = Array.isArray(dateList)
+        ? resolveExtendDate("last", dateList, todayStr())
+        : null;
+      setExtendDate(source ? dayjs(source, "YYYYMMDD") : null);
     } catch (err) {
       console.log(err);
     }
   };
 
   const createDateTask = async () => {
+    if (!createDate) {
+      message.warning("请选择创建任务的日期");
+      return;
+    }
     try {
       const currentDate = createDate.format("YYYYMMDD");
-      const targetDate = extendDate.format("YYYYMMDD");
+      // 继承日期为空表示不继承，后端会创建默认任务组
+      const targetDate = extendDate ? extendDate.format("YYYYMMDD") : "";
       await TaskExtend.CreateDateTask(currentDate, targetDate);
       onSuccess?.();
     } catch (err: any) {

@@ -16,8 +16,11 @@
 
   .navScroll {
     flex: 1;
+    // 纵向 flex 子项默认最小高度为内容高度，会撑破容器导致最后一项被裁切且无法滚动
+    min-height: 0;
     overflow-y: auto;
     margin-top: 8px;
+    padding-bottom: 8px;
   }
 
   .rightPanel {

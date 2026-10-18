@@ -71,12 +71,12 @@ func main() {
 		URL:              "/",
 	})
 
-	settingWindow := app.App.Window.NewWithOptions(application.WebviewWindowOptions{
+	settingOptions := application.WebviewWindowOptions{
 		Name:  "setting",
 		Title: "Setting Window",
 		// Window sized to the golden ratio (1000 / 618 ≈ 1.618).
-		Width:  1000,
-		Height: 618,
+		Width:  720,
+		Height: 600,
 		Mac: application.MacWindow{
 			InvisibleTitleBarHeight: 50,
 			Backdrop:                application.MacBackdropTranslucent,
@@ -85,7 +85,9 @@ func main() {
 		BackgroundColour: application.NewRGB(6, 7, 15),
 		URL:              "/setting",
 		Hidden:           true,
-	})
+	}
+	app.SetSettingOptions(settingOptions)
+	settingWindow := app.App.Window.NewWithOptions(settingOptions)
 
 	app.SetMainWindow(mainWindow)
 	app.SetSettingWindow(settingWindow)

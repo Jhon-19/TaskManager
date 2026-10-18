@@ -1,0 +1,15 @@
+.settingPage {
+  box-sizing: border-box;
+  // 外层 .container 有 32px 顶部 padding（主窗口同理用 calc 补偿），否则文档溢出出现滚动条
+  height: calc(100vh - 32px);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.settingTitle {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}

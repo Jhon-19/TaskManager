@@ -1,5 +1,6 @@
 import TaskExtend from "../pages/TaskExtend";
 import TaskManage from "../pages/TaskManage";
+import Setting from "../pages/Setting";
 
 export const routes = [
   {
@@ -9,5 +10,9 @@ export const routes = [
   {
     path: '/task-manage',
     Component: TaskManage,
+  },
+  {
+    path: '/setting',
+    Component: Setting,
   },
 ]
