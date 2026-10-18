@@ -8,6 +8,12 @@ export interface Task {
     "isCompleted": boolean;
 }
 
+export interface TaskConfigData {
+    "extendFrom": string;
+    "extendOnStart": boolean;
+    "dateListCount": number;
+}
+
 export interface TaskGroup {
     "id": string;
     "name": string;
@@ -19,4 +25,10 @@ export interface UpdateTask {
     "title": string | null;
     "detail": string | null;
     "isCompleted": boolean | null;
+}
+
+export interface UpdateTaskConfigData {
+    "extendFrom": string | null;
+    "extendOnStart": boolean | null;
+    "dateListCount": number | null;
 }

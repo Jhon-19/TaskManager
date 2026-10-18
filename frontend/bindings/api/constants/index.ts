@@ -3,6 +3,8 @@
 
 export type {
     Task,
+    TaskConfigData,
     TaskGroup,
-    UpdateTask
+    UpdateTask,
+    UpdateTaskConfigData
 } from "./models.js";

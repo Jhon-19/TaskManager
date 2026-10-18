@@ -20,7 +20,7 @@ var gh, _ = github.New(github.Config{
 })
 
 func InitMenu(customApp *CustomApp) {
-	app := customApp.GetApp()
+	app := customApp.App
 	if err := app.Updater.Init(updater.Config{
 		CurrentVersion: currentVersion,
 		Providers:      []updater.Provider{gh},
