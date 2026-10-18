@@ -83,7 +83,7 @@ func main() {
 			TitleBar:                application.MacTitleBarHiddenInset,
 		},
 		BackgroundColour: application.NewRGB(6, 7, 15),
-		URL:              "/setting",
+		URL:              "/#/setting",
 		Hidden:           true,
 	}
 	app.SetSettingOptions(settingOptions)
