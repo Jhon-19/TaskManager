@@ -32,7 +32,14 @@ function TaskGroup(props: any) {
   // 维护本地任务列表以支持乐观更新
   const [tasks, setTasks] = useState<any[]>([]);
   useEffect(() => {
-    setTasks(Array.isArray(propTasks) ? propTasks : []);
+    // 稳定分区：未完成在前、已完成在后，形成连续的“已完成区域”
+    setTasks(
+      Array.isArray(propTasks)
+        ? [...propTasks].sort(
+            (a, b) => Number(!!a.isCompleted) - Number(!!b.isCompleted)
+          )
+        : []
+    );
   }, [propTasks]);
 
   const handleAddTask = () => {
@@ -68,24 +75,66 @@ function TaskGroup(props: any) {
 
   const handleTaskDragEnd = (event: DragEndEvent) => {
     if (event.canceled) return;
-    const sourceId = event.operation.source?.id;
-    const targetId = event.operation.target?.id;
-    if (!sourceId || !targetId || sourceId === targetId) return;
+    const source = event.operation.source;
+    const target = event.operation.target;
+    if (!source) return;
 
-    const from = tasks.findIndex((t) => t.id === sourceId);
-    const to = tasks.findIndex((t) => t.id === targetId);
-    if (from === -1 || to === -1) return;
+    const from = tasks.findIndex((t) => t.id === source.id);
+    if (from === -1) return;
+
+    // 已完成任务整体禁用拖拽，防御性拦截
+    if (tasks[from]?.isCompleted) return;
+
+    // OptimisticSortingPlugin 在拖拽过程中会把 target 重置为 source 自身，
+    // 因此不能用 sourceId !== targetId 判断是否发生了移动。
+    // 真正的新位置由 sortable 的投影 index 给出；未投影时回退到 target 的位置。
+    const projectedIndex = (source as any).index;
+    let to: number;
+    if (typeof projectedIndex === "number" && projectedIndex !== from) {
+      to = projectedIndex;
+    } else if (target && target.id !== source.id) {
+      to = tasks.findIndex((t) => t.id === target.id);
+    } else {
+      return;
+    }
+    if (to === -1 || from === to) return;
 
     const next = produce(tasks, (draft) => {
       const [moved] = draft.splice(from, 1);
       draft.splice(to, 0, moved);
     });
 
+    // 边界校验：禁止未完成任务进入已完成区域。
+    // 直接以最终数组形态判定——若已完成段之后仍存在未完成任务，说明越界，拒绝。
+    const firstCompletedIdx = next.findIndex((t) => t.isCompleted);
+    const invariantBroken =
+      firstCompletedIdx !== -1 &&
+      next.slice(firstCompletedIdx).some((t) => !t.isCompleted);
+    if (invariantBroken) return;
+
     // 乐观更新
     setTasks(next);
     TaskExtend.UpdateTaskGroupData(selectedDate, id, JSON.stringify(next)).catch(
       (err: any) => {
         message.error(err?.message || "排序保存失败");
+        onRefresh?.();
+      }
+    );
+  };
+
+  const handleTaskCompleteChange = (taskId: string, completed: boolean) => {
+    const next = produce(tasks, (draft) => {
+      const t = draft.find((item) => item.id === taskId);
+      if (t) t.isCompleted = completed;
+    }).sort(
+      (a, b) => Number(!!a.isCompleted) - Number(!!b.isCompleted)
+    );
+
+    // 乐观更新（顺序 + 完成态一并持久化）
+    setTasks(next);
+    TaskExtend.UpdateTaskGroupData(selectedDate, id, JSON.stringify(next)).catch(
+      (err: any) => {
+        message.error(err?.message || "保存失败");
         onRefresh?.();
       }
     );
@@ -136,6 +185,9 @@ function TaskGroup(props: any) {
                 taskIndex={index}
                 defaultEditing={task.id === newTaskId}
                 onRefresh={onRefresh}
+                onCompleteChange={(checked) =>
+                  handleTaskCompleteChange(task.id, checked)
+                }
               />
             ))}
         </Flex>

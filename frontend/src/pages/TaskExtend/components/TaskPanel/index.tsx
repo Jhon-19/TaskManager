@@ -41,13 +41,26 @@ function TaskPanel(props: any) {
 
   const handleGroupDragEnd = (event: DragEndEvent) => {
     if (event.canceled) return;
-    const sourceId = event.operation.source?.id;
-    const targetId = event.operation.target?.id;
-    if (!sourceId || !targetId || sourceId === targetId) return;
+    const source = event.operation.source;
+    const target = event.operation.target;
+    if (!source) return;
 
-    const from = taskGroups.findIndex((g) => g.id === sourceId);
-    const to = taskGroups.findIndex((g) => g.id === targetId);
-    if (from === -1 || to === -1) return;
+    const from = taskGroups.findIndex((g) => g.id === source.id);
+    if (from === -1) return;
+
+    // OptimisticSortingPlugin 在拖拽过程中会把 target 重置为 source 自身，
+    // 因此不能用 sourceId !== targetId 判断是否发生了移动。
+    // 真正的新位置由 sortable 的投影 index 给出；未投影时回退到 target 的位置。
+    const projectedIndex = (source as any).index;
+    let to: number;
+    if (typeof projectedIndex === "number" && projectedIndex !== from) {
+      to = projectedIndex;
+    } else if (target && target.id !== source.id) {
+      to = taskGroups.findIndex((g) => g.id === target.id);
+    } else {
+      return;
+    }
+    if (to === -1 || from === to) return;
 
     const next = produce(taskGroups, (draft) => {
       const [moved] = draft.splice(from, 1);

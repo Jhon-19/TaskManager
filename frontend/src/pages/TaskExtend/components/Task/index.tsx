@@ -10,7 +10,7 @@ import classNames from "classnames";
 import MarkdownEditor from "@/components/MarkdownEditor";
 
 function Task(props: any) {
-  const { task, taskGroupId, taskIndex, onRefresh, defaultEditing } = props;
+  const { task, taskGroupId, taskIndex, onRefresh, defaultEditing, onCompleteChange } = props;
 
   const { selectedDate } = useTaskExtendContext();
 
@@ -19,8 +19,12 @@ function Task(props: any) {
   const [detailDrawerVisible, setDetailDrawerVisible] = useState(false);
   const [detailValue, setDetailValue] = useState(detail);
 
-  // 任务项可拖（外层 DragDropProvider 在 TaskGroup）
-  const { ref, isDragging } = useSortable({ id, index: taskIndex });
+  // 任务项可拖（外层 DragDropProvider 在 TaskGroup）。已完成任务禁用拖拽。
+  const { ref, isDragging } = useSortable({
+    id,
+    index: taskIndex,
+    disabled: task?.isCompleted,
+  });
 
   const updateTask = async (key, value) => {
     try {
@@ -45,7 +49,12 @@ function Task(props: any) {
 
   const handleTaskCheckedChange = (e) => {
     const checked = e.target.checked;
-    updateTask("isCompleted", checked);
+    // 优先走父级回调（会同时重排并持久化顺序 + 完成态），缺省时回退单字段更新
+    if (onCompleteChange) {
+      onCompleteChange(checked);
+    } else {
+      updateTask("isCompleted", checked);
+    }
   };
 
   const handleDetailConfirm = () => {
@@ -64,7 +73,11 @@ function Task(props: any) {
         ref={ref as any}
         className={classNames(styles.task, { [styles.dragging]: isDragging })}
       >
-        <HolderOutlined className={styles.dragHandle} />
+        <HolderOutlined
+          className={classNames(styles.dragHandle, {
+            [styles.dragHandleDisabled]: task?.isCompleted,
+          })}
+        />
         <Checkbox
           checked={task?.isCompleted}
           onChange={handleTaskCheckedChange}
