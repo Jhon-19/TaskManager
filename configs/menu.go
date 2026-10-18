@@ -19,7 +19,8 @@ var gh, _ = github.New(github.Config{
 	},
 })
 
-func InitMenu(app *application.App) {
+func InitMenu(customApp *CustomApp) {
+	app := customApp.GetApp()
 	if err := app.Updater.Init(updater.Config{
 		CurrentVersion: currentVersion,
 		Providers:      []updater.Provider{gh},
@@ -35,5 +36,8 @@ func InitMenu(app *application.App) {
 				log.Fatalf("update error: %v", err)
 			}
 		}()
+	})
+	appMenu.Add("设置").OnClick(func(ctx *application.Context) {
+		customApp.ShowSettingWindow()
 	})
 }
