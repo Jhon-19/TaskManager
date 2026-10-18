@@ -84,6 +84,7 @@ func main() {
 		},
 		BackgroundColour: application.NewRGB(6, 7, 15),
 		URL:              "/setting",
+		Hidden:           true,
 	})
 
 	app.SetMainWindow(mainWindow)

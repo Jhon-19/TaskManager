@@ -54,7 +54,7 @@ func (t *TaskConfig) GetConfig() (constants.TaskConfigData, error) {
 		return constants.TaskConfigData{}, err
 	}
 
-	return constants.TaskConfigData{}, nil
+	return configData, nil
 }
 
 func updateConfigElement(srcConfigData *constants.TaskConfigData, updateConfigData constants.UpdateTaskConfigData) {
