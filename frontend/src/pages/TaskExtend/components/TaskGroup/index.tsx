@@ -123,12 +123,15 @@ function TaskGroup(props: any) {
   };
 
   const handleTaskCompleteChange = (taskId: string, completed: boolean) => {
+    // 排序需在 recipe 内对 draft 执行：produce 返回的结果被 immer 深度冻结，
+    // 在其上调用原地的 .sort() 会抛 "Attempted to assign to readonly property"
     const next = produce(tasks, (draft) => {
       const t = draft.find((item) => item.id === taskId);
       if (t) t.isCompleted = completed;
-    }).sort(
-      (a, b) => Number(!!a.isCompleted) - Number(!!b.isCompleted)
-    );
+      draft.sort(
+        (a, b) => Number(!!a.isCompleted) - Number(!!b.isCompleted)
+      );
+    });
 
     // 乐观更新（顺序 + 完成态一并持久化）
     setTasks(next);
