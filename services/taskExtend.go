@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
-	"sort"
 
 	"github.com/google/uuid"
 )
@@ -25,12 +24,12 @@ func (t *TaskExtend) CreateDateTask(date string, extendDate string) error {
 
 	dataFilePath := filepath.Join(dateFolder, "tasks.json")
 
-	extendTaskData, err := t.GetTaskData(extendDate)
-
 	var initialData []constants.TaskGroup
 
-	if err == nil {
-		initialData = filterCompletedTask(extendTaskData)
+	if extendDate != "" {
+		if extendTaskData, err := t.GetTaskData(extendDate); err == nil {
+			initialData = filterCompletedTask(extendTaskData)
+		}
 	}
 
 	if len(initialData) == 0 {
@@ -82,24 +81,27 @@ func (t *TaskExtend) GetDateList(pageNum int, pageSize int) ([]string, error) {
 		return []string{}, err
 	}
 
-	dateList := make([]string, 0, pageSize)
-
-	for index, entry := range entries {
+	names := make([]string, 0, len(entries))
+	for _, entry := range entries {
 		if entry.IsDir() {
-			if index >= pageNum*pageSize && index < (pageNum+1)*pageSize {
-				dateList = append(dateList, entry.Name())
-			}
-			if len(dateList) >= pageSize {
-				break
-			}
+			names = append(names, entry.Name())
 		}
 	}
 
-	sort.Slice(dateList, func(i, j int) bool {
-		return dateList[i] > dateList[j]
-	})
+	slices.Reverse(names)
 
-	return dateList, nil
+	start := pageNum * pageSize
+	end := (pageNum + 1) * pageSize
+
+	if start >= len(names) {
+		return []string{}, nil
+	}
+
+	if end >= len(names) {
+		end = len(names)
+	}
+
+	return names[start:end], nil
 }
 
 func (t *TaskExtend) GetTaskData(date string) ([]constants.TaskGroup, error) {

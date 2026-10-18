@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 type TaskConfig struct{}
@@ -75,7 +77,11 @@ func (t *TaskConfig) UpdateConfig(updateConfigData constants.UpdateTaskConfigDat
 		return err
 	}
 	updateConfigElement(&configData, updateConfigData)
-	err = saveConfig(configData)
+	if err = saveConfig(configData); err != nil {
+		return err
+	}
 
-	return err
+	application.Get().Event.Emit("task-config:changed")
+
+	return nil
 }
