@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import Vditor from "vditor";
+import { Image } from "antd";
 import { Browser } from "@wailsio/runtime";
 import "./index.less";
 import { UploadImage } from "../../../bindings/api/services/taskextend";
@@ -9,6 +10,7 @@ function MarkdownEditor(props: any) {
   const { value, onChange, className } = props;
 
   const [vd, setVd] = useState<Vditor>();
+  const [previewSrc, setPreviewSrc] = useState<string>();
 
   useEffect(() => {
     const vditor = new Vditor("vditor", {
@@ -18,6 +20,12 @@ function MarkdownEditor(props: any) {
       },
       mode: "ir",
       height: "100%",
+      image: {
+        // 内置预览层 z-index 低于 antd Drawer，改用 antd Image 预览
+        preview: (img: Element) => {
+          setPreviewSrc(img.getAttribute("src") || undefined);
+        },
+      },
       link: {
         // 关闭 Vditor 默认 window.open，改由下方捕获监听处理 cmd/ctrl+click
         isOpen: false,
@@ -130,10 +138,23 @@ function MarkdownEditor(props: any) {
   }, []);
 
   return (
-    <div
-      id="vditor"
-      className={classNames("vditor", "markdown-editor", className)}
-    ></div>
+    <>
+      <div
+        id="vditor"
+        className={classNames("vditor", "markdown-editor", className)}
+      ></div>
+      <Image
+        style={{ display: "none" }}
+        src={previewSrc}
+        preview={{
+          open: !!previewSrc,
+          src: previewSrc,
+          onOpenChange: (open) => {
+            if (!open) setPreviewSrc(undefined);
+          },
+        }}
+      />
+    </>
   );
 }
 
