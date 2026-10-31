@@ -26,6 +26,10 @@ function MarkdownEditor(props: any) {
           setPreviewSrc(img.getAttribute("src") || undefined);
         },
       },
+      preview: {
+        // 空数组：隐藏预览顶部 Desktop/Tablet 等设备切换，默认桌面宽度
+        actions: [],
+      },
       link: {
         // 关闭 Vditor 默认 window.open，改由下方捕获监听处理 cmd/ctrl+click
         isOpen: false,
