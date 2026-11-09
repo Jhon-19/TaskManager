@@ -134,8 +134,18 @@ function MarkdownEditor(props: any) {
     };
     container?.addEventListener("click", onCmdClick, true);
 
+    // 中文输入法组词期间按回车是确认候选词，不应被 Vditor 当作换行处理
+    // WebKit 中 compositionend 先于 keydown 触发，此时 isComposing 为 false，但 keyCode 为 229
+    const onImeKeydown = (e: KeyboardEvent) => {
+      if (e.isComposing || e.keyCode === 229) {
+        e.stopPropagation();
+      }
+    };
+    container?.addEventListener("keydown", onImeKeydown, true);
+
     return () => {
       container?.removeEventListener("click", onCmdClick, true);
+      container?.removeEventListener("keydown", onImeKeydown, true);
       vd?.destroy();
       setVd(undefined);
     };

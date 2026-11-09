@@ -57,12 +57,10 @@ function Task(props: any) {
     }
   };
 
-  const handleDetailConfirm = () => {
-    updateTask("detail", detailValue);
-    setDetailDrawerVisible(false);
-  };
-
   const handleDetailClose = () => {
+    if (detailValue !== detail) {
+      updateTask("detail", detailValue);
+    }
     setDetailDrawerVisible(false);
   };
 
@@ -94,6 +92,7 @@ function Task(props: any) {
             icon={<FileTextOutlined />}
             type="text"
             onClick={() => {
+              setDetailValue(detail);
               setDetailDrawerVisible(true);
             }}
           />
@@ -117,14 +116,6 @@ function Task(props: any) {
         size={520}
         open={detailDrawerVisible}
         onClose={handleDetailClose}
-        footer={
-          <Flex gap={12}>
-            <Button onClick={handleDetailClose}>取消</Button>
-            <Button onClick={handleDetailConfirm} type="primary">
-              确认
-            </Button>
-          </Flex>
-        }
         destroyOnHidden
       >
         <MarkdownEditor value={detailValue} onChange={setDetailValue} />
